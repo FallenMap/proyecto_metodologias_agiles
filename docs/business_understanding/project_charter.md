@@ -33,14 +33,13 @@ Finalmente, se realiza un despliegue del modelo final validado, de tal manera qu
 
 ## Cronograma
 
-
-| Etapa                                          | Duración Estimada | Fechas                          |
-| ------------------------------------------------ | -------------------- | --------------------------------- |
-| Entendimiento del negocio y carga de datos     | 2 semanas          | del 1 de mayo al 15 de mayo     |
-| Preprocesamiento, análisis exploratorio       | 4 semanas          | del 16 de mayo al 15 de junio   |
-| Modelamiento y extracción de características | 4 semanas          | del 16 de junio al 15 de julio  |
-| Despliegue                                     | 2 semanas          | del 16 de julio al 31 de julio  |
-| Evaluación y entrega final                    | 3 semanas          | del 1 de agosto al 21 de agosto |
+| Etapa                                        | Duración Estimada | Fechas                         |
+| -------------------------------------------- | ----------------- | ------------------------------ |
+| Entendimiento del negocio y carga de datos   | 2 semanas         | del 23 de junio al 3 de julio  |
+| Preprocesamiento, análisis exploratorio      | 1 semana          | del 4 de julio al 10 de junio  |
+| Modelamiento y extracción de características | 3 semana          | del 4 de julio al 29 de julio  |
+| Despliegue                                   | 2 semanas         | del 17 de julio al 29 de julio |
+| Evaluación y entrega final                   | 3 semanas         | del 24 de julio al 29 de julio |
 
 Hay que tener en cuenta que estas fechas son de ejemplo, estas deben ajustarse de acuerdo al proyecto.
 
@@ -52,13 +51,21 @@ Hay que tener en cuenta que estas fechas son de ejemplo, estas deben ajustarse d
 
 ## Presupuesto
 
+Se estructura un presupuesto como se muestra:
+
+| Concepto                          | Valor unitario | Medida                                             | Unidades | Total           | Observaciones                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| :-------------------------------- | -------------- | -------------------------------------------------- | -------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Hora laborada                     | COP $ 40.000   | Hora por persona                                   | 48       | COP $ 1'920.000 | Estimada semana de trabajo con 4 horas laborales efectivas, por 4 semanas y con un equipo de 3 personas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Recursos en nube (Cómputo)        | COP $ 2.062,5  | Hora de uso                                        | 48       | COP $ 99.000    | Estimado a partir de referencia de Databricks.com (Calculadora de precios): [https://www.databricks.com/product/pricing/product-pricing/instance-types]. Se estima el uso de la nube de AWS con un tipo de instancia de cómputo m4.xlarge (4 CPUS, 16GB RAM), con 3 instancias (una por persona) por la misma cantidad de horas laborales estimadas para el proyecto. El modelo de precios para esta instancia sería de tipo All-Purpose ($0.4125 por hora para el tipo de instancia mencionado). Se considera un valor de USD por peso colombiano de 5.000. Se realiza la estimaciòn para la regiòn Norte de Virginia (us-centra-1) |
+| Recursos en nube (Almacenamiento) | COP $ 114      | GB de almacenamiento por mes                       | 50       | COP $ 5.750     | Se estima un total de 50 GB de almacenamiento de datos en formato .parquet dentro del lago de datos gestionado por Databricks. Los costos se estiman para un lago de datos almacenado en un bucket S3 de AWS.                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Servicio del modelo               | COP $ 350      | Hora de uso de Model Serving de Databricks por DBU | 640      | COP $ 224.000   | Se estima un llamado al modelo cada 10 segundos en entorno de despliegue por alrededor de un mes. Estimando una ejecución del modelo de 30 segundos por llamado. Se estima que la cantidad de horas de servicio en 8 horas por día, en 5 días habiles a la semana y 4 semanas en el mes sea de 160 horas. Así mismo, cada hora representa 4 DBUs o unidades de cómputo de databricks, generando así una cantidad de 640 horas x DBU. Se usa la calculadora de precios de databricks para estimar este costo.                                                                                                                         |
 
 ## Stakeholders
 
-- Médicos especializados
+- Médicos especialistas
 - Los médicos especializados serán los principales usuarios del modelo, siendo estos capaces de enviar una imagen de radiografía tomada a un paciente en formato digital, y recibir una predicción del estado del paciente en relación a su afectación por neumonía.
 - Los médicos esperarán un buen desempeño del modelo, arrojando información útil para la toma de decisiones y el diagnóstico efectivo del paciente.
 
 ## Aprobaciones
 
-- Médico especializado
+- Validación y aprobación por parte de un médico especialista responsable, quien verificará que el modelo cumpla con los criterios clínicos y de precisión necesarios antes de su uso en entornos asistenciales.
