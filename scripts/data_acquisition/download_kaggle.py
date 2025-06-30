@@ -6,8 +6,8 @@ def main():
     #  /app/src/download_kaggle.py  →  /app  (raíz del proyecto)
     project_root = pathlib.Path(__file__).resolve().parent.parent
 
-    #   /app/database/bronze/raw
-    raw_path = project_root / "database" / "bronze" / "raw"
+    #   /app/database/bronze
+    raw_path = project_root / "database" / "bronze" 
 
     # ¿Ya existe el dataset?
     if all((raw_path / split).exists() for split in ["train", "val", "test"]):
@@ -19,6 +19,8 @@ def main():
 
     # Dentro del zip: …/versions/<n>/chest_xray
     extracted = next(downloaded_path.glob("**/chest_xray"))
+    print(f"Creando carpeta destino: {raw_path}")
+    raw_path.mkdir(parents=True, exist_ok=True)
 
     print(f"Copiando datos a {raw_path}")
     shutil.copytree(extracted, raw_path, dirs_exist_ok=True)

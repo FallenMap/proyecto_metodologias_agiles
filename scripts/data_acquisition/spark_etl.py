@@ -37,14 +37,20 @@ def process_split(spark, base_path, split, output_base):
                        .when(col("clase") == "PNEUMONIA", 1))
             .withColumn("split", lit(split))
             .select("imagen_id", "ruta_origen", "clase", "clase_codificada", "split"))
+    
 
-    df.write.mode("overwrite").parquet(to_file_url(output_dir))
-    print(f"✅ Guardado parquet en: {output_dir}")
+    for clase in ["NORMAL", "PNEUMONIA"]:
+        clase_df = df.filter(col("clase") == clase)
+        clase_output = output_dir / clase
+        clase_df.write.mode("overwrite").parquet(to_file_url(clase_output))
+        print(f"Gaurdado parquet de clase '{clase}' en: {clase_output}")
+
 
 def main():
     project_root = Path(__file__).resolve().parent.parent
-    base_path    = project_root / "database" / "bronze" / "raw"
-    output_base  = project_root / "data"
+    base_path    = project_root / "database" / "bronze" 
+    output_base  = project_root / "database" / "silver" 
+    output_base.mkdir(parents=True, exist_ok=True)
 
     spark = (SparkSession.builder
                 .appName("PneumoniaETL")
