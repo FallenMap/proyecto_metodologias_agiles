@@ -30,22 +30,28 @@ def process_split(spark, base_path, split, output_base):
 
     df = spark.read.format("binaryFile").load([to_file_url(p) for p in all_images])
 
-    df = df.withColumn("ruta_origen", input_file_name()) \
-           .withColumn("imagen_id", regexp_extract("ruta_origen", r"([^/\\]+)\.jpeg$", 1)) \
-           .withColumn("clase", regexp_extract("ruta_origen", r"(NORMAL|PNEUMONIA)", 1)) \
-           .withColumn("clase_codificada", when(col("clase") == "NORMAL", 0)
-                                       .when(col("clase") == "PNEUMONIA", 1)
-                                       .otherwise(None)) \
-           .withColumn("split", lit(split)) \
-           .select("imagen_id", "ruta_origen", "clase", "clase_codificada", "split")
+    df = (df.withColumn("ruta_origen", input_file_name())
+            .withColumn("imagen_id", regexp_extract("ruta_origen", r"([^/\\]+)\.jpeg$", 1))
+            .withColumn("clase",      regexp_extract("ruta_origen", r"(NORMAL|PNEUMONIA)", 1))
+            .withColumn("clase_codificada",
+                        when(col("clase") == "NORMAL", 0)
+                       .when(col("clase") == "PNEUMONIA", 1))
+            .withColumn("split", lit(split))
+            .select("imagen_id", "ruta_origen", "clase", "clase_codificada", "split"))
+    
 
-    df.write.mode("overwrite").parquet(to_file_url(output_dir))  # Cambio importante
+    for clase in ["NORMAL", "PNEUMONIA"]:
+        clase_df = df.filter(col("clase") == clase)
+        clase_output = output_dir / clase
+        clase_df.write.mode("overwrite").parquet(to_file_url(clase_output))
+        print(f"Gaurdado parquet de clase '{clase}' en: {clase_output}")
 
-    print(f"✅ Guardado parquet en: {output_dir}")
 
 def main():
-    base_path = "C:/Maestria_MLOPS/proyecto_metodologias_agiles/src/Pneumonia_Detection/database/bronze/raw"
-    output_base = "C:/Maestria_MLOPS/proyecto_metodologias_agiles/src/Pneumonia_Detection/database/silver/parquets"
+    project_root = Path(__file__).resolve().parent.parent
+    base_path    = project_root / "database" / "bronze" 
+    output_base  = project_root / "database" / "silver" 
+    output_base.mkdir(parents=True, exist_ok=True)
 
     spark = SparkSession.builder \
         .appName("PneumoniaETL") \
