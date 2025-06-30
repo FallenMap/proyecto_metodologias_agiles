@@ -1,0 +1,19 @@
+services:
+  etl:
+    build: .
+    image: pneumonia-etl:latest
+    volumes:
+      - ./database:/app/database
+      - ./data:/app/data
+    environment:
+      - HOME=/home/spark
+    tty: true
+
+  download:
+    image: pneumonia-etl:latest
+    build: .
+    entrypoint: ["python3", "/app/src/download_kaggle.py"]
+    volumes:
+      - ./database:/app/database
+    environment:
+      - HOME=/home/spark

@@ -1,23 +1,22 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import input_file_name, regexp_extract, lit, col, when
+from pathlib import Path
 import os
 
-def to_file_url(path):
-    return "file:///" + path.replace("\\", "/")
+to_file_url = lambda p: "file:///" + str(p).replace("\\", "/")
 
 def get_image_paths(directory):
-    paths = []
-    for root, _, files in os.walk(directory):
-        for file in files:
-            if file.lower().endswith(".jpeg"):
-                paths.append(os.path.join(root, file))
-    return paths
+    return [
+        os.path.join(root, f)
+        for root, _, files in os.walk(directory)
+        for f in files if f.lower().endswith(".jpeg")
+    ]
 
 def process_split(spark, base_path, split, output_base):
-    input_dir = os.path.join(base_path, split)
-    output_dir = os.path.join(output_base, f"split={split}")  # Cambio clave aquí
+    input_dir  = base_path / split
+    output_dir = output_base / f"split={split}"
 
-    if not os.path.exists(input_dir):
+    if not input_dir.exists():
         print(f"Carpeta inexistente: {input_dir}")
         return
 
@@ -30,30 +29,29 @@ def process_split(spark, base_path, split, output_base):
 
     df = spark.read.format("binaryFile").load([to_file_url(p) for p in all_images])
 
-    df = df.withColumn("ruta_origen", input_file_name()) \
-           .withColumn("imagen_id", regexp_extract("ruta_origen", r"([^/\\]+)\.jpeg$", 1)) \
-           .withColumn("clase", regexp_extract("ruta_origen", r"(NORMAL|PNEUMONIA)", 1)) \
-           .withColumn("clase_codificada", when(col("clase") == "NORMAL", 0)
-                                       .when(col("clase") == "PNEUMONIA", 1)
-                                       .otherwise(None)) \
-           .withColumn("split", lit(split)) \
-           .select("imagen_id", "ruta_origen", "clase", "clase_codificada", "split")
+    df = (df.withColumn("ruta_origen", input_file_name())
+            .withColumn("imagen_id", regexp_extract("ruta_origen", r"([^/\\]+)\.jpeg$", 1))
+            .withColumn("clase",      regexp_extract("ruta_origen", r"(NORMAL|PNEUMONIA)", 1))
+            .withColumn("clase_codificada",
+                        when(col("clase") == "NORMAL", 0)
+                       .when(col("clase") == "PNEUMONIA", 1))
+            .withColumn("split", lit(split))
+            .select("imagen_id", "ruta_origen", "clase", "clase_codificada", "split"))
 
-    df.write.mode("overwrite").parquet(to_file_url(output_dir))  # Cambio importante
-
+    df.write.mode("overwrite").parquet(to_file_url(output_dir))
     print(f"✅ Guardado parquet en: {output_dir}")
 
 def main():
-    base_path = "C:/Maestria_MLOPS/proyecto_metodologias_agiles/src/Pneumonia_Detection/database/bronze/raw"
-    output_base = "C:/Maestria_MLOPS/proyecto_metodologias_agiles/src/Pneumonia_Detection/database/silver/parquets"
+    project_root = Path(__file__).resolve().parent.parent
+    base_path    = project_root / "database" / "bronze" / "raw"
+    output_base  = project_root / "data"
 
-    spark = SparkSession.builder \
-        .appName("PneumoniaETL") \
-        .config("spark.hadoop.io.native.lib.available", "false") \
-        .config("spark.hadoop.native.lib", "false") \
-        .config("spark.hadoop.fs.file.impl.disable.cache", "true") \
-        .config("spark.driver.extraJavaOptions", "-Dos.name=Windows 10") \
-        .getOrCreate()
+    spark = (SparkSession.builder
+                .appName("PneumoniaETL")
+                .config("spark.hadoop.io.native.lib.available", "false")
+                .config("spark.hadoop.native.lib", "false")
+                .config("spark.hadoop.fs.file.impl.disable.cache", "true")
+                .getOrCreate())
 
     for split in ["train", "val", "test"]:
         process_split(spark, base_path, split, output_base)

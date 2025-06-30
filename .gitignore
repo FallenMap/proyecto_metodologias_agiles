@@ -3,4 +3,3 @@
 env_vars*
 credentials*
 **/build/*
-src/Pneumonia_Detection/database/bronze/
