@@ -15,7 +15,7 @@ def get_image_paths(directory):
 
 def process_split(spark, base_path, split, output_base):
     input_dir = os.path.join(base_path, split)
-    output_dir = os.path.join(output_base, split)
+    output_dir = os.path.join(output_base, f"split={split}")  # Cambio clave aquí
 
     if not os.path.exists(input_dir):
         print(f"Carpeta inexistente: {input_dir}")
@@ -39,6 +39,26 @@ def process_split(spark, base_path, split, output_base):
            .withColumn("split", lit(split)) \
            .select("imagen_id", "ruta_origen", "clase", "clase_codificada", "split")
 
-    df.write.mode("overwrite").option("header", True).csv(to_file_url(output_dir))  # CSV directo
+    df.write.mode("overwrite").parquet(to_file_url(output_dir))  # Cambio importante
 
-    print(f"✅ Guardado CSV en: {output_dir}")
+    print(f"✅ Guardado parquet en: {output_dir}")
+
+def main():
+    base_path = "C:/Maestria_MLOPS/proyecto_metodologias_agiles/src/Pneumonia_Detection/database/bronze/raw"
+    output_base = "C:/Maestria_MLOPS/proyecto_metodologias_agiles/src/Pneumonia_Detection/database/silver/parquets"
+
+    spark = SparkSession.builder \
+        .appName("PneumoniaETL") \
+        .config("spark.hadoop.io.native.lib.available", "false") \
+        .config("spark.hadoop.native.lib", "false") \
+        .config("spark.hadoop.fs.file.impl.disable.cache", "true") \
+        .config("spark.driver.extraJavaOptions", "-Dos.name=Windows 10") \
+        .getOrCreate()
+
+    for split in ["train", "val", "test"]:
+        process_split(spark, base_path, split, output_base)
+
+    spark.stop()
+
+if __name__ == "__main__":
+    main()
