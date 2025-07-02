@@ -45,7 +45,7 @@ def process_split(spark, base_path, split, output_base):
         clase_df.write.mode("overwrite").parquet(to_file_url(clase_output))
         print(f"Gaurdado parquet de clase '{clase}' en: {clase_output}")
 
-
+#Rutas automatizadas
 def main():
     project_root = Path(__file__).resolve().parent.parent.parent
     base_path   = project_root / "src" / "Pneumonia_Detection" / "database" / "bronze" / "raw"
