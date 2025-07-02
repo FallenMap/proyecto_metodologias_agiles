@@ -47,9 +47,9 @@ def process_split(spark, base_path, split, output_base):
 
 
 def main():
-    project_root = Path(__file__).resolve().parent.parent
-    base_path    = project_root / "database" / "bronze" 
-    output_base  = project_root / "database" / "silver" 
+    project_root = Path(__file__).resolve().parent.parent.parent
+    base_path   = project_root / "src" / "Pneumonia_Detection" / "database" / "bronze" / "raw"
+    output_base = project_root / "src" / "Pneumonia_Detection" / "database" / "silver" 
     output_base.mkdir(parents=True, exist_ok=True)
 
     spark = (SparkSession.builder
