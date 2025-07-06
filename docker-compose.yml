@@ -1,13 +1,13 @@
 services:
   etl:
     build: .
+    user: root
     image: pneumonia-etl:latest
-    entrypoint: ["python3", "/app/scripts/data_acquisition/spark_etl.py"]
+    entrypoint: ["python3", "/app/scripts/data_acquisition/etl.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
     environment:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
-      - HOME=/home/spark
     tty: true
 
   download:
@@ -19,14 +19,13 @@ services:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
     environment:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
-      - HOME=/home/spark
 
   preprocess:
     image: pneumonia-etl:latest
     build: .
-    entrypoint: ["python3", "/app/src/Pneumonia_Detection/visualization/main.py"]
+    user: root
+    entrypoint: ["python3", "/app/src/Pneumonia_Detection/preprocessing/main.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
     environment:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
-      - HOME=/home/spark
