@@ -50,16 +50,23 @@ Ademaás se verificó que no existen valores anómalos ni distorsiones por sobre
 
 ## Ranking de variables
 
-En esta sección se presenta un ranking de las variables más importantes para predecir la variable objetivo. Se utilizan técnicas como la correlación, el análisis de componentes principales (PCA) o la importancia de las variables en un modelo de aprendizaje automático.
+La proyección de las imágenes en el espacio generado por los dos primeras componentes principales (PCA) muestra que la variabilidad más relevante del conjunto no está alineada directamente con la clasificación entre `NORMAL` y `PNEUMONIA`.
+
+Aunque existe cierta concentración de ejemplos de neumonía en regiones del espacio PCA, no se observa una separación clara entre clases lo que sugiere que la distinción requiere un enfoque más complejo y supervisado.
+
+Este análisis permite concluir que, si bien existen patrones globales en las imágenes, la tarea de clasificación requiere capturar relaciones más profundas entre regiones específicas del contenido visual. PCA, en este caso, aporta una perspectiva muy útil, pero no suficiente para clasificar directamente.
 
 ## Relación entre variables explicativas y variable objetivo
 
-Debido a la naturaleza visual de los datos, la relación entre variables (píxeles) y la clase objetivo no es directamente interpretable desde una matriz de correlación tradicional.
+En este conjunto de datos, las variables explicativas corresponden a los valores individuales de 16,384 píxeles por imagen. Estas variables, al no tener significado individual (por ejemplo, `pixel_47` o `pixel_1023`), no pueden ser interpretadas de forma directa como en datasets tabulares tradicionales.
 
-Sin embargo, se consideran las siguientes estrategias para analizar estas relaciones:
+Se intentó explorar esta relación a través del análisis de componentes principales (PCA). Pero, la proyección en las primeras dos componentes no mostró una separación clara entre las clases `NORMAL` y `PNEUMONIA`, lo que sugiere que las direcciones de máxima varianza no están alineadas con la variable objetivo.
 
-- Aplicar **t-SNE o UMAP** para proyectar los vectores de pixeles a 2D y observar agrupaciones por clase.
-- Entrenar modelos clasificadores (SVM, CNN, etc.) y observar el comportamiento de separación entre clases.
-- Explorar visualmente la diferencia entre imágenes promedio por clase (`NORMAL` vs `PNEUMONIA`).
+Tampoco se generó una matriz de correlación completa ni modelos lineales simples, ya que:
 
-Estas acciones permitirán cuantificar y visualizar las diferencias estructurales entre las clases en función de la información contenida en los píxeles.
+- El número de variables es extremadamente alto.
+- La relación entre los pixeles y la clase es compleja, probablemente no lineal y dependiente del contexto visual.
+
+Por estas razones, se concluye que la relación entre las variables explicativas y la variable objetivo podrian, tal vez  requierir técnicas supervisadas más avanzadas, como Una red neuronal convolucional (CNN) o modelos basados en árboles de decisión, los cuales podrán capturar patrones espaciales o jerárquicos presentes en las imágenes.
+
+El análisis PCA realizado sigue siendo valioso para comprender la estructura general de los datos y servirá como base para métodos supervisados en etapas posteriores del proyecto.
