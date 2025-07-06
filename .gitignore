@@ -8,3 +8,4 @@ src/Pneumonia_Detection/database/
 .venv
 ./database
 ./data
+./images
