@@ -1,23 +1,22 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import input_file_name, regexp_extract, lit, col, when
+from pathlib import Path
 import os
 
-def to_file_url(path):
-    return "file:///" + path.replace("\\", "/")
+to_file_url = lambda p: "file:///" + str(p).replace("\\", "/")
 
 def get_image_paths(directory):
-    paths = []
-    for root, _, files in os.walk(directory):
-        for file in files:
-            if file.lower().endswith(".jpeg"):
-                paths.append(os.path.join(root, file))
-    return paths
+    return [
+        os.path.join(root, f)
+        for root, _, files in os.walk(directory)
+        for f in files if f.lower().endswith(".jpeg")
+    ]
 
 def process_split(spark, base_path, split, output_base):
-    input_dir = os.path.join(base_path, split)
-    output_dir = os.path.join(output_base, f"split={split}")  # Cambio clave aquí
+    input_dir  = base_path / split
+    output_dir = output_base / f"split={split}"
 
-    if not os.path.exists(input_dir):
+    if not input_dir.exists():
         print(f"Carpeta inexistente: {input_dir}")
         return
 
@@ -48,18 +47,18 @@ def process_split(spark, base_path, split, output_base):
 
 
 def main():
-    project_root = Path(__file__).resolve().parent.parent
-    base_path    = project_root / "database" / "bronze" 
-    output_base  = project_root / "database" / "silver" 
+    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH")
+    project_root = pathlib.Path(BASE_ETL_PATH).resolve()
+    base_path    = project_root / "bronze" 
+    output_base  = project_root / "silver" 
     output_base.mkdir(parents=True, exist_ok=True)
 
-    spark = SparkSession.builder \
-        .appName("PneumoniaETL") \
-        .config("spark.hadoop.io.native.lib.available", "false") \
-        .config("spark.hadoop.native.lib", "false") \
-        .config("spark.hadoop.fs.file.impl.disable.cache", "true") \
-        .config("spark.driver.extraJavaOptions", "-Dos.name=Windows 10") \
-        .getOrCreate()
+    spark = (SparkSession.builder
+                .appName("PneumoniaETL")
+                .config("spark.hadoop.io.native.lib.available", "false")
+                .config("spark.hadoop.native.lib", "false")
+                .config("spark.hadoop.fs.file.impl.disable.cache", "true")
+                .getOrCreate())
 
     for split in ["train", "val", "test"]:
         process_split(spark, base_path, split, output_base)

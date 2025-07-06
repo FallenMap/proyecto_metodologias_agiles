@@ -1,18 +1,14 @@
-import kagglehub
-import os
+import kagglehub, shutil, pathlib, os
 
 def main():
     kaggle_dataset = "paultimothymooney/chest-xray-pneumonia"
-    
-    current_dir = os.path.dirname(os.path.abspath(__file__))  
-    project_root = os.path.abspath(os.path.join(current_dir, "..", "..")) 
-    raw_path = os.path.join(project_root, "src", "Pneumonia_Detection", "database", "bronze", "raw")
 
     #  /app/src/download_kaggle.py  →  /app  (raíz del proyecto)
-    project_root = pathlib.Path(__file__).resolve().parent.parent
+    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH")
+    project_root = pathlib.Path(BASE_ETL_PATH).resolve()
 
     #   /app/database/bronze
-    raw_path = project_root / "database" / "bronze" 
+    raw_path = project_root / "bronze" 
 
     # ¿Ya existe el dataset?
     if all((raw_path / split).exists() for split in ["train", "val", "test"]):

@@ -3,4 +3,8 @@
 env_vars*
 credentials*
 **/build/*
-src/Pneumonia_Detection/database/bronze/
+src/Pneumonia_Detection/database/
+!src/Pneumonia_Detection/database/__init__.py
+.venv
+./database
+./data
