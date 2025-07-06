@@ -7,7 +7,7 @@ from PIL import Image
 
 # Configuración
 IMAGE_SIZE = (128, 128)
-NORMALIZAR = True
+NORMALIZAR = False
 NUM_PIXELS = IMAGE_SIZE[0] * IMAGE_SIZE[1]
 
 def preprocess_image(content_bytes):
