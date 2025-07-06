@@ -4,10 +4,8 @@ import numpy as np
 from pathlib import Path
 import seaborn as sns
 import os
-from dotenv import load_dotenv
 from sklearn.decomposition import PCA
 
-load_dotenv()
 NON_PIXEL_COLUMNS = ["imagen_id", "clase", "clase_codificada", "split"]
 
 class Visualizer:
