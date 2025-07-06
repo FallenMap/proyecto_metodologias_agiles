@@ -29,3 +29,15 @@ services:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
     environment:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
+
+  visualization:
+    image: pneumonia-etl:latest
+    build: .
+    user: root
+    entrypoint: ["python3", "/app/src/Pneumonia_Detection/visualization/main.py"]
+    volumes:
+      - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
+      . ./images:/app/images
+    environment:
+      - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
+      - OUTPUTS_PATH=/app/images
