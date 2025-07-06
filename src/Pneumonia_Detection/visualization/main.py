@@ -49,18 +49,16 @@ class Visualizer:
 
     def plot_pixel_distribution(self):
         if self.df is None:
-            raise ValueError("Data not loaded. Call load_data() first.")
+            raise ValueError("Datos no cargados. Invoque load_data()")
         
         pixel_columns = [col for col in self.df.columns if col not in NON_PIXEL_COLUMNS]
         pixel_values = self.df[pixel_columns].values.flatten()
 
         plt.figure(figsize=(8, 4))
-        print("Gray")
         sns.histplot(pixel_values, bins=20, color='gray')
-        print("Gray")
-        plt.title("Pixel Value Distribution")
-        plt.xlabel("Pixel value")
-        plt.ylabel("Count")
+        plt.title("Distribución de valores de pixel")
+        plt.xlabel("Valor de pixel")
+        plt.ylabel("Cantidad")
 
         out_path = self.outputs_path / f"{self.split}_pixel_distribution.png"
         plt.savefig(out_path)
@@ -69,11 +67,11 @@ class Visualizer:
 
     def plot_label_distribution(self):
         if self.df is None:
-            raise ValueError("Data not loaded. Call load_data() first.")
+            raise ValueError("Datos no cargados. Invoque load_data()")
 
         plt.figure(figsize=(6, 4))
         sns.countplot(x="clase", data=self.df, palette="pastel")
-        plt.title("Label Distribution")
+        plt.title("Distribución de etiquetas")
         plt.xlabel("Clase")
         plt.ylabel("Cantidad")
 
@@ -97,7 +95,7 @@ def main():
     )
 
     visualizer.load_data()
-    # visualizer.generate_sample_images_report()
+    visualizer.generate_sample_images_report()
     visualizer.plot_pixel_distribution()
     visualizer.plot_label_distribution()
 
