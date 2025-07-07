@@ -4,6 +4,7 @@ import numpy as np
 from pathlib import Path
 import seaborn as sns
 import os
+from sklearn.decomposition import PCA
 
 NON_PIXEL_COLUMNS = ["imagen_id", "clase", "clase_codificada", "split"]
 
@@ -50,6 +51,7 @@ class Visualizer:
     def plot_pixel_distribution(self):
         if self.df is None:
             raise ValueError("Datos no cargados. Invoque load_data()")
+
         
         pixel_columns = [col for col in self.df.columns if col not in NON_PIXEL_COLUMNS]
         pixel_values = self.df[pixel_columns].values.flatten()
@@ -68,9 +70,8 @@ class Visualizer:
     def plot_label_distribution(self):
         if self.df is None:
             raise ValueError("Datos no cargados. Invoque load_data()")
-
         plt.figure(figsize=(6, 4))
-        sns.countplot(x="clase", data=self.df, palette="pastel")
+        sns.countplot(data=self.df, x="clase", hue="clase", palette="pastel", legend=False)
         plt.title("Distribución de etiquetas")
         plt.xlabel("Clase")
         plt.ylabel("Cantidad")
@@ -80,12 +81,36 @@ class Visualizer:
         plt.close()
         print(f"Label distribution plot saved to: {out_path}")
 
+    def plot_pca_projection(self, n_components=2):
+        if self.df is None:
+            raise ValueError("Datos no cargados. Invoque load_data()")
 
+        pixel_columns = [col for col in self.df.columns if col not in NON_PIXEL_COLUMNS]
+        X = self.df[pixel_columns].values
+        y = self.df["clase"].values
+
+        pca = PCA(n_components=n_components)
+        X_pca = pca.fit_transform(X)
+
+        df_pca = pd.DataFrame(X_pca, columns=[f"PC{i+1}" for i in range(n_components)])
+        df_pca["clase"] = y
+
+        plt.figure(figsize=(8, 6))
+        sns.scatterplot(data=df_pca, x="PC1", y="PC2", hue="clase", palette="Set2", alpha=0.6)
+        plt.title("Proyección PCA de imágenes")
+        plt.xlabel("Componente Principal 1")
+        plt.ylabel("Componente Principal 2")
+        plt.legend(title="Clase")
+
+        out_path = self.outputs_path / f"{self.split}_pca_projection.png"
+        plt.savefig(out_path)
+        plt.close()
+        print(f"PCA projection plot saved to: {out_path}")
 
 def main():
 
-    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH")
-    OUTPUTS_PATH = os.getenv("OUTPUTS_PATH")
+    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH","../database/Silver")
+    OUTPUTS_PATH = os.getenv("OUTPUTS_PATH","../visualization")
 
     project_root = Path(BASE_ETL_PATH).resolve()
     output_root = Path(OUTPUTS_PATH).resolve()
@@ -98,6 +123,7 @@ def main():
     visualizer.generate_sample_images_report()
     visualizer.plot_pixel_distribution()
     visualizer.plot_label_distribution()
+    visualizer.plot_pca_projection() 
 
 if __name__ == "__main__":
     main()
