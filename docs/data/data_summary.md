@@ -1,6 +1,6 @@
 # Reporte de Datos
 
-Este documento contiene los resultados del análisis exploratorio de datos del conjunto Chest X-Ray Images (Pneumonia), implementado como parte del procesamiento basada en Spark y Pandas.
+Este documento contiene los resultados del análisis exploratorio de datos del conjunto Chest X-Ray Images (Pneumonia).
 
 
 ## Resumen general de los datos
