@@ -75,6 +75,6 @@ Tampoco se generó una matriz de correlación completa ni modelos lineales simpl
 - El número de variables es extremadamente alto.
 - La relación entre los pixeles y la clase es compleja, probablemente no lineal y dependiente del contexto visual.
 
-Por estas razones, se concluye que la relación entre las variables explicativas y la variable objetivo podrían, tal vez  requierir técnicas supervisadas más avanzadas, como Una red neuronal convolucional (CNN) o modelos basados en árboles de decisión, los cuales podrán capturar patrones espaciales o jerárquicos presentes en las imágenes.
+Por estas razones, se concluye que la relación entre las variables explicativas y la variable objetivo podrían, tal vez  requerir técnicas supervisadas más avanzadas, como Una red neuronal convolucional (CNN) o modelos basados en árboles de decisión, los cuales podrán capturar patrones espaciales o jerárquicos presentes en las imágenes.
 
 El análisis PCA realizado sigue siendo valioso para comprender la estructura general de los datos y servirá como base para métodos supervisados en etapas posteriores del proyecto.
