@@ -70,8 +70,6 @@ class Visualizer:
     def plot_label_distribution(self):
         if self.df is None:
             raise ValueError("Datos no cargados. Invoque load_data()")
-
-
         plt.figure(figsize=(6, 4))
         sns.countplot(data=self.df, x="clase", hue="clase", palette="pastel", legend=False)
         plt.title("Distribución de etiquetas")
