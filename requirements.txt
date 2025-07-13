@@ -2,3 +2,7 @@ kagglehub
 pandas
 pyarrow
 pillow
+matplotlib
+seaborn
+scikit-learn
+numpy

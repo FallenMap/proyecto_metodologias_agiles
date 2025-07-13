@@ -1,8 +1,17 @@
 services:
-  etl:
-    build: .
+  download:
     user: root
-    image: pneumonia-etl:latest
+    build: .
+    entrypoint: ["python3", "/app/scripts/data_acquisition/download_kaggle.py"]
+    volumes:
+      - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
+    environment:
+      - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
+    tty: true
+
+  etl:
+    user: root
+    build: .
     entrypoint: ["python3", "/app/scripts/data_acquisition/etl.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
@@ -10,34 +19,25 @@ services:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
     tty: true
 
-  download:
-    image: pneumonia-etl:latest
-    build: .
-    user: root
-    entrypoint: ["python3", "/app/scripts/data_acquisition/download_kaggle.py"]
-    volumes:
-      - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
-    environment:
-      - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
-
   preprocess:
-    image: pneumonia-etl:latest
-    build: .
     user: root
+    build: .
     entrypoint: ["python3", "/app/src/Pneumonia_Detection/preprocessing/main.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
     environment:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
+    tty: true
 
   visualization:
-    image: pneumonia-etl:latest
+    user: root  
     build: .
-    user: root
     entrypoint: ["python3", "/app/src/Pneumonia_Detection/visualization/main.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
-      . ./images:/app/images
+      - ./images:/app/images
     environment:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
       - OUTPUTS_PATH=/app/images
+      - MAX_ROWS=3000 # Número máximo de filas a procesar por lote. Ajusta este valor según la memoria disponible del contenedor o del equipo host.
+    tty: true
