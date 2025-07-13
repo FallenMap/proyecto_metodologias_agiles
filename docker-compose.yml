@@ -41,3 +41,13 @@ services:
       - OUTPUTS_PATH=/app/images
       - MAX_ROWS=3000 # Número máximo de filas a procesar por lote. Ajusta este valor según la memoria disponible del contenedor o del equipo host.
     tty: true
+
+  training:
+    user: root  
+    build: .
+    entrypoint: ["python3", "/app/src/Pneumonia_Detection/training/main.py"]
+    volumes:
+      - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
+    environment:
+      - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
+    tty: true
