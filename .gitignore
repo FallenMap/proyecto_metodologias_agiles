@@ -9,3 +9,5 @@ src/Pneumonia_Detection/database/
 ./database
 ./data
 images
+devbox.json
+devbox.lock

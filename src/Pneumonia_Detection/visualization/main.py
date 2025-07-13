@@ -15,19 +15,24 @@ class Visualizer:
         self.outputs_path.mkdir(parents=True, exist_ok=True)
         self.split = split
         self.df = None
-    
-    def load_data(self):
-        self.df = pd.read_parquet(self.dwh_path / "gold" / self.split / "data.parquet")
+
+    def load_data(self, max_rows=5000):
+        data_path = self.dwh_path / "gold" / self.split / "data.parquet"
+        print(f"Cargando datos desde: {data_path}")
+        df = pd.read_parquet(data_path)
+
+        if len(df) > max_rows:
+            print(f"Reduciendo de {len(df)} a {max_rows} filas (batching)")
+            df = df.sample(n=max_rows, random_state=42).reset_index(drop=True)
+
+        self.df = df
 
     def generate_sample_images_report(self, max_images=10):
         if self.df is None:
-            raise ValueError("Los datos aùn no han sido cargados. Invoque load_data()")
+            raise ValueError("Los datos aún no han sido cargados. Invoque load_data()")
 
         df_sample = self.df.sample(n=min(max_images, len(self.df)))
-        pixel_columns = [
-            col for col in self.df.columns 
-                if col not in NON_PIXEL_COLUMNS
-        ]
+        pixel_columns = [col for col in self.df.columns if col not in NON_PIXEL_COLUMNS]
         img_size = int(np.sqrt(len(pixel_columns)))
 
         fig, axes = plt.subplots(len(df_sample), 2, figsize=(6, len(df_sample) * 2))
@@ -52,7 +57,6 @@ class Visualizer:
         if self.df is None:
             raise ValueError("Datos no cargados. Invoque load_data()")
 
-        
         pixel_columns = [col for col in self.df.columns if col not in NON_PIXEL_COLUMNS]
         pixel_values = self.df[pixel_columns].values.flatten()
 
@@ -81,13 +85,19 @@ class Visualizer:
         plt.close()
         print(f"Label distribution plot saved to: {out_path}")
 
-    def plot_pca_projection(self, n_components=2):
+    def plot_pca_projection(self, n_components=2, batch_size=3000):
         if self.df is None:
             raise ValueError("Datos no cargados. Invoque load_data()")
 
         pixel_columns = [col for col in self.df.columns if col not in NON_PIXEL_COLUMNS]
         X = self.df[pixel_columns].values
         y = self.df["clase"].values
+
+        if X.shape[0] > batch_size:
+            print(f"Reduciendo datos para PCA: de {X.shape[0]} a {batch_size} imágenes")
+            idx = np.random.choice(X.shape[0], batch_size, replace=False)
+            X = X[idx]
+            y = y[idx]
 
         pca = PCA(n_components=n_components)
         X_pca = pca.fit_transform(X)
@@ -107,23 +117,23 @@ class Visualizer:
         plt.close()
         print(f"PCA projection plot saved to: {out_path}")
 
+
 def main():
-
-    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH","../database/Silver")
-    OUTPUTS_PATH = os.getenv("OUTPUTS_PATH","../visualization")
-
+    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH", "../database/Silver")
+    OUTPUTS_PATH = os.getenv("OUTPUTS_PATH", "../visualization")
+    MAX_ROWS = int(os.getenv("MAX_ROWS"))
     project_root = Path(BASE_ETL_PATH).resolve()
     output_root = Path(OUTPUTS_PATH).resolve()
 
-    visualizer = Visualizer(
-        project_root, output_root
-    )
+    visualizer = Visualizer(project_root, output_root)
 
-    visualizer.load_data()
+    # Cambia max_rows según capacidad
+    visualizer.load_data(max_rows=MAX_ROWS)
+
     visualizer.generate_sample_images_report()
     visualizer.plot_pixel_distribution()
     visualizer.plot_label_distribution()
-    visualizer.plot_pca_projection() 
+    visualizer.plot_pca_projection(batch_size=MAX_ROWS)
 
 if __name__ == "__main__":
     main()

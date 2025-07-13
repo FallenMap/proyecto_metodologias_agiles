@@ -4,6 +4,8 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from PIL import Image
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 # Configuración
 IMAGE_SIZE = (128, 128)
@@ -31,7 +33,11 @@ def preprocess_image(content_bytes):
 def process_split(split_path: Path, output_dir: Path):
     print(f"\nProcesando split desde {split_path}")
 
-    registros = []
+    split_output_dir = output_dir / split_path.name
+    split_output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = split_output_dir / "data.parquet"
+
+    table_batches = []
 
     for clase_folder in ["NORMAL", "PNEUMONIA"]:
         parquet_path = split_path / clase_folder / "data.parquet"
@@ -41,11 +47,13 @@ def process_split(split_path: Path, output_dir: Path):
 
         print(f"Procesando clase '{clase_folder}' desde: {parquet_path}")
         df = pd.read_parquet(parquet_path)
-        
-        for _, row in df.iterrows():
+
+        batch = []
+
+        for idx, row in df.iterrows():
             pixels = preprocess_image(row["content"])
             if pixels is not None:
-                registros.append({
+                batch.append({
                     "imagen_id": row["imagen_id"],
                     "clase": row["clase"],
                     "clase_codificada": row["clase_codificada"],
@@ -53,18 +61,24 @@ def process_split(split_path: Path, output_dir: Path):
                     **{f"pixel_{i}": pixels[i] for i in range(NUM_PIXELS)}
                 })
 
-    if not registros:
+            # Escribir en bloques cada 500 imágenes
+            if len(batch) >= 500:
+                df_batch = pd.DataFrame(batch)
+                table = pa.Table.from_pandas(df_batch)
+                table_batches.append(table)
+                batch = []
+
+        if batch:
+            df_batch = pd.DataFrame(batch)
+            table = pa.Table.from_pandas(df_batch)
+            table_batches.append(table)
+
+    # Escribimos todos los datos juntos (fuera del loop de clases)
+    if table_batches:
+        pq.write_table(pa.concat_tables(table_batches), output_file)
+        print(f"Guardado GOLD parquet para split '{split_path.name}' en: {output_file}")
+    else:
         print(f"No se procesaron imágenes válidas para el split: {split_path.name}")
-        return
-
-    processed_df = pd.DataFrame(registros)
-
-    split_output_dir = output_dir / split_path.name
-    split_output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = split_output_dir / "data.parquet"
-
-    processed_df.to_parquet(output_file, index=False)
-    print(f"Guardado GOLD parquet para split '{split_path.name}' en: {output_file}")
 
 def main():
     BASE_ETL_PATH = os.getenv("BASE_ETL_PATH")
