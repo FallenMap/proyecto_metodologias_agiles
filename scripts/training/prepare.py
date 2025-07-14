@@ -86,12 +86,12 @@ def cargar_datos_divididos(output_dir, split_name):
         y.append(np.load(y_path))
     return np.concatenate(X), np.concatenate(y)
 
-def guardar_datos_por_lotes(X, y, output_dir, split_name, prefix="aug"):
+def guardar_datos_por_lotes(X, y, output_dir, split_name):
     for i in range(0, len(X), BATCH_SIZE):
         X_batch = X[i:i+BATCH_SIZE]
         y_batch = y[i:i+BATCH_SIZE]
-        np.save(output_dir / f"X_{prefix}_{split_name}_{i//BATCH_SIZE}.npy", X_batch)
-        np.save(output_dir / f"y_{prefix}_{split_name}_{i//BATCH_SIZE}.npy", y_batch)
+        np.save(output_dir / f"X_{split_name}_{i//BATCH_SIZE}.npy", X_batch)
+        np.save(output_dir / f"y_{split_name}_{i//BATCH_SIZE}.npy", y_batch)
 
 def aumentar_clase_minoria(X, y, output_dir, split_name):
     print(f"Aumentando clase minoritaria para {split_name}...")
@@ -100,7 +100,6 @@ def aumentar_clase_minoria(X, y, output_dir, split_name):
     cantidades = list(counter.values())
 
     clase_min = clases[np.argmin(cantidades)]
-    clase_max = clases[np.argmax(cantidades)]
     cantidad_objetivo = max(cantidades)
 
     # Extraer datos de la clase minoritaria
@@ -130,7 +129,7 @@ def aumentar_clase_minoria(X, y, output_dir, split_name):
         y_balanceado = np.concatenate([y, nuevas_labels])
 
         # Guardar
-        guardar_datos_por_lotes(X_balanceado, y_balanceado, output_dir, split_name, prefix="aug")
+        guardar_datos_por_lotes(X_balanceado, y_balanceado, output_dir, split_name)
         print(f"{split_name}: Datos aumentados y guardados.")
 
 def main():
@@ -143,6 +142,8 @@ def main():
     for split in ["train", "val", "test"]:
         path_split = gold_dir / split / "data.parquet"
         procesar_y_guardar_por_lotes(path_split, output_dir, split)
+
+    print("Procesamiento completado")
 
     # Aumentar datos de clase minoritaria
     for split in ["train", "val", "test"]:

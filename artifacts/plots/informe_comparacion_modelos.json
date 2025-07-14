@@ -1,14 +1,14 @@
 {
   "resumen": {
-    "precision_tensorflow": 0.625,
+    "precision_tensorflow": 0.7512820363044739,
     "precision_baseline": 0.7371794871794872,
-    "diferencia_precision": -0.11217948717948723,
-    "mejor_modelo": "Random Forest"
+    "diferencia_precision": 0.014102549124986652,
+    "mejor_modelo": "TensorFlow CNN"
   },
   "comparacion_detallada": {
     "cnn": {
-      "precision_prueba": 0.625,
-      "perdida_prueba": 29.12999153137207,
+      "precision_prueba": 0.7512820363044739,
+      "perdida_prueba": 1.243857741355896,
       "tipo_modelo": "Red Neuronal Convolucional",
       "ventajas": [
         "Puede capturar patrones espaciales en im\u00e1genes",
@@ -38,6 +38,7 @@
     }
   },
   "recomendaciones": [
-    "Random Forest baseline se desempe\u00f1a mejor que TensorFlow CNN"
+    "TensorFlow CNN se desempe\u00f1a mejor que Random Forest baseline",
+    "Los modelos se desempe\u00f1an de forma similar"
   ]
 }

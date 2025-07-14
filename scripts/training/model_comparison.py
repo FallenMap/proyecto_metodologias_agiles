@@ -19,7 +19,7 @@ def cargar_resultados_modelos(output_dir: str) -> Dict[str, Any]:
     model_dir = Path(output_dir) / Path("models")
     results_dir = Path(output_dir) / Path("results")
 
-    model_cnn = PneumoniaCNN('v1')
+    model_cnn = PneumoniaCNN('v2')
     model_cnn.load_model(model_dir)
     model_cnn.load_results(results_dir)
     outputs_cnn = model_cnn.output_results
