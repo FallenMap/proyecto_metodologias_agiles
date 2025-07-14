@@ -34,6 +34,8 @@ def train_baseline_model(
 
     (X_train, X_val, X_test), (y_train, y_val, y_test) = model.prepare_data((X_train, X_val, X_test), (y_train, y_val, y_test))
 
+    model.build_model()
+
     print("Entrenando modelo baseline")
     model.train(
         X_train, y_train
@@ -65,8 +67,7 @@ def main():
     print("Entrenando modelo de linea base")
 
     model, results = train_baseline_model(
-        output_dir=OUTPUT_DIR, version='v1',
-        optimize_hyperparams=PneumoniaRandomForestHyperparameters()
+        output_dir=OUTPUT_DIR, version='v2',
     )
 
     print("Entrenamiento finalizado")

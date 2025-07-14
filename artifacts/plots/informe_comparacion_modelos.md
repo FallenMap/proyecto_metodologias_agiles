@@ -3,9 +3,9 @@
 ## Resumen
 
 - **Precisión TensorFlow CNN**: 0.6250
-- **Precisión Random Forest**: 0.5625
-- **Diferencia de Precisión**: 0.0625
-- **Mejor Modelo**: TensorFlow CNN
+- **Precisión Random Forest**: 0.7372
+- **Diferencia de Precisión**: -0.1122
+- **Mejor Modelo**: Random Forest
 
 ## Comparación Detallada
 
@@ -27,7 +27,7 @@
 
 ### Random Forest Baseline
 
-- **Precisión**: 0.5625
+- **Precisión**: 0.7372
 - **Tipo de Modelo**: Random Forest
 
 **Ventajas**:
@@ -43,4 +43,4 @@
 
 ## Recomendaciones
 
-- TensorFlow CNN se desempeña mejor que Random Forest baseline
+- Random Forest baseline se desempeña mejor que TensorFlow CNN

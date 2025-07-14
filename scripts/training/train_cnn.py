@@ -34,7 +34,7 @@ def train_cnn_model(
     model.build_model()
 
     model.train(
-        X_train, y_train, X_test, y_test, epochs = 10, batch_size = 32,
+        X_train, y_train, X_test, y_test, epochs = 20, batch_size = 32,
         model_save_path = tmp_path
     )
 
@@ -62,7 +62,7 @@ def main():
     print("Entrenando modelo de linea base")
 
     model, results = train_cnn_model(
-        output_dir=OUTPUT_DIR, version='v1',
+        output_dir=OUTPUT_DIR, version='v2',
     )
 
     print("Entrenamiento finalizado")

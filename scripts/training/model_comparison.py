@@ -24,7 +24,7 @@ def cargar_resultados_modelos(output_dir: str) -> Dict[str, Any]:
     model_cnn.load_results(results_dir)
     outputs_cnn = model_cnn.output_results
 
-    model_linebase = PneumoniaRandomForest('v1')
+    model_linebase = PneumoniaRandomForest('v2')
     model_linebase.load_model(model_dir)
     model_linebase.load_results(results_dir)
     outputs_linebase = model_linebase.output_results

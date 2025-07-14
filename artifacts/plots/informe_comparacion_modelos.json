@@ -1,9 +1,9 @@
 {
   "resumen": {
     "precision_tensorflow": 0.625,
-    "precision_baseline": 0.5625,
-    "diferencia_precision": 0.0625,
-    "mejor_modelo": "TensorFlow CNN"
+    "precision_baseline": 0.7371794871794872,
+    "diferencia_precision": -0.11217948717948723,
+    "mejor_modelo": "Random Forest"
   },
   "comparacion_detallada": {
     "cnn": {
@@ -22,7 +22,7 @@
       ]
     },
     "baseline": {
-      "precision_prueba": 0.5625,
+      "precision_prueba": 0.7371794871794872,
       "tipo_modelo": "Random Forest",
       "ventajas": [
         "Entrenamiento y predicci\u00f3n r\u00e1pidos",
@@ -38,6 +38,6 @@
     }
   },
   "recomendaciones": [
-    "TensorFlow CNN se desempe\u00f1a mejor que Random Forest baseline"
+    "Random Forest baseline se desempe\u00f1a mejor que TensorFlow CNN"
   ]
 }
