@@ -22,7 +22,8 @@ services:
   preprocess:
     user: root
     build: .
-    entrypoint: ["python3", "/app/src/Pneumonia_Detection/preprocessing/main.py"]
+    entrypoint:
+      ["python3", "/app/src/Pneumonia_Detection/preprocessing/main.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
     environment:
@@ -30,9 +31,10 @@ services:
     tty: true
 
   visualization:
-    user: root  
+    user: root
     build: .
-    entrypoint: ["python3", "/app/src/Pneumonia_Detection/visualization/main.py"]
+    entrypoint:
+      ["python3", "/app/src/Pneumonia_Detection/visualization/main.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
       - ./images:/app/images
@@ -42,10 +44,30 @@ services:
       - MAX_ROWS=3000 # Número máximo de filas a procesar por lote. Ajusta este valor según la memoria disponible del contenedor o del equipo host.
     tty: true
 
-  training:
-    user: root  
+  training_prep:
+    user: root
     build: .
-    entrypoint: ["python3", "/app/src/Pneumonia_Detection/training/main.py"]
+    entrypoint: ["python3", "/scripts/training/prepare.py"]
+    volumes:
+      - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
+    environment:
+      - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
+    tty: true
+
+  modeling_baseline:
+    user: root
+    build: .
+    entrypoint: ["python3", "/scripts/training/train_baseline.py"]
+    volumes:
+      - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
+    environment:
+      - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
+    tty: true
+
+  modeling_cnn:
+    user: root
+    build: .
+    entrypoint: ["python3", "/scripts/training/train_cnn.py"]
     volumes:
       - ./src/Pneumonia_Detection/database:/app/src/Pneumonia_Detection/database
     environment:
