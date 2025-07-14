@@ -79,17 +79,3 @@ def process_split(split_path: Path, output_dir: Path):
         print(f"Guardado GOLD parquet para split '{split_path.name}' en: {output_file}")
     else:
         print(f"No se procesaron imágenes válidas para el split: {split_path.name}")
-
-def main():
-    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH")
-    project_root = Path(BASE_ETL_PATH).resolve()
-    silver_base = project_root / "silver"
-    gold_base   = project_root / "gold"
-    gold_base.mkdir(parents=True, exist_ok=True)
-
-    for split in ["train", "val", "test"]:
-        split_path = silver_base / split
-        process_split(split_path, gold_base)
-
-if __name__ == "__main__":
-    main()

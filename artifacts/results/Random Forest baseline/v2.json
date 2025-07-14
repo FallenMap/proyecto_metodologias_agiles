@@ -1,0 +1,87 @@
+{
+  "test_accuracy": 0.7371794871794872,
+  "classification_report": {
+    "0": {
+      "precision": 0.9605263157894737,
+      "recall": 0.31196581196581197,
+      "f1-score": 0.47096774193548385,
+      "support": 234.0
+    },
+    "1": {
+      "precision": 0.7062043795620438,
+      "recall": 0.9923076923076923,
+      "f1-score": 0.8251599147121536,
+      "support": 390.0
+    },
+    "accuracy": 0.7371794871794872,
+    "macro avg": {
+      "precision": 0.8333653476757588,
+      "recall": 0.6521367521367522,
+      "f1-score": 0.6480638283238187,
+      "support": 624.0
+    },
+    "weighted avg": {
+      "precision": 0.80157510564733,
+      "recall": 0.7371794871794872,
+      "f1-score": 0.6923378499209024,
+      "support": 624.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      73,
+      161
+    ],
+    [
+      3,
+      387
+    ]
+  ],
+  "feature_importance_top_10": [
+    {
+      "feature": "pixel_354",
+      "importance": 0.0058429170259918315
+    },
+    {
+      "feature": "pixel_81418",
+      "importance": 0.005181353335447407
+    },
+    {
+      "feature": "pixel_1121",
+      "importance": 0.005136670655147169
+    },
+    {
+      "feature": "pixel_1133",
+      "importance": 0.004945342963918583
+    },
+    {
+      "feature": "pixel_1152",
+      "importance": 0.004835365580105657
+    },
+    {
+      "feature": "pixel_66317",
+      "importance": 0.004833847371151636
+    },
+    {
+      "feature": "pixel_79114",
+      "importance": 0.004615923210279014
+    },
+    {
+      "feature": "pixel_395",
+      "importance": 0.004353587134647721
+    },
+    {
+      "feature": "pixel_79108",
+      "importance": 0.004032662921781392
+    },
+    {
+      "feature": "pixel_68819",
+      "importance": 0.003853303164701637
+    }
+  ],
+  "model_params": {
+    "n_estimators": 100,
+    "max_depth": null,
+    "random_state": null
+  }
+}

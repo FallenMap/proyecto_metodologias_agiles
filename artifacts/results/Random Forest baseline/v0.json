@@ -1,0 +1,87 @@
+{
+  "test_accuracy": 0.5625,
+  "classification_report": {
+    "0": {
+      "precision": 1.0,
+      "recall": 0.125,
+      "f1-score": 0.2222222222222222,
+      "support": 8.0
+    },
+    "1": {
+      "precision": 0.5333333333333333,
+      "recall": 1.0,
+      "f1-score": 0.6956521739130435,
+      "support": 8.0
+    },
+    "accuracy": 0.5625,
+    "macro avg": {
+      "precision": 0.7666666666666666,
+      "recall": 0.5625,
+      "f1-score": 0.45893719806763283,
+      "support": 16.0
+    },
+    "weighted avg": {
+      "precision": 0.7666666666666666,
+      "recall": 0.5625,
+      "f1-score": 0.45893719806763283,
+      "support": 16.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      1,
+      7
+    ],
+    [
+      0,
+      8
+    ]
+  ],
+  "feature_importance_top_10": [
+    {
+      "feature": "pixel_67289",
+      "importance": 0.006295571991860581
+    },
+    {
+      "feature": "pixel_420",
+      "importance": 0.005495826798311798
+    },
+    {
+      "feature": "pixel_360",
+      "importance": 0.005494941459611066
+    },
+    {
+      "feature": "pixel_1931",
+      "importance": 0.005124848081418422
+    },
+    {
+      "feature": "pixel_73738",
+      "importance": 0.005022856551672619
+    },
+    {
+      "feature": "pixel_68362",
+      "importance": 0.004875336799300922
+    },
+    {
+      "feature": "pixel_1883",
+      "importance": 0.004806798587046451
+    },
+    {
+      "feature": "pixel_449",
+      "importance": 0.003979743705166935
+    },
+    {
+      "feature": "pixel_89860",
+      "importance": 0.003739487746618255
+    },
+    {
+      "feature": "pixel_36395",
+      "importance": 0.0037196207779602096
+    }
+  ],
+  "model_params": {
+    "n_estimators": 100,
+    "max_depth": null,
+    "random_state": 42
+  }
+}
