@@ -61,7 +61,7 @@ El modelo baseline alcanzó una precisión del 73.72%, confirmando que los datos
   - **Interpretabilidad Parcial**: Permite caclular la importancia de cada característica (píxel), ofreciendo una idea de qué áreas de la imagen son más influyentes para el modelo. El siguiente gráfico muestra los 10 píxeles que el modelo consideró más importantes para realizar su clasificación.
   - **Robustez**: Los Random Forest son generalmente robustos al sobreajuste en comparación con modelos más complejos, especialmente con datos de alta dimensionalidad.
 
-![Gráfico de barras mostrando la importancia de las 10 características principales para el modelo Random Forest](visualization//importancia_caracteristicas_baseline.png)
+![Gráfico de barras mostrando la importancia de las 10 características principales para el modelo Random Forest](visualization/importancia_caracteristicas_baseline.png)
 
 - **Debilidades**:
   - **Pérdida de Información Espacial**: La debilidad más importante es que, al aplanar la imagen en un vector, el modelo pierde por completo la relación espacial entre los píxeles. No puede aprender patrones, texturas o formas, que son cruciales para el diagnóstico radiológico.
