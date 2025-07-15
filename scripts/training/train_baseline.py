@@ -42,7 +42,7 @@ def train_baseline_model(
     )
 
     print("Evaluando modelo baseline")
-    results = model.evaluate(X_test, y_test)
+    results = model.evaluate(X_val, y_val)
 
     model.get_feature_importance()
 

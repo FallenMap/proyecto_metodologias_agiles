@@ -8,7 +8,7 @@ import json
 import joblib
 
 class PneumoniaCNN(BaseModel):
-    def __init__(self, version, input_shape=(128, 128, 6), num_classes=4):
+    def __init__(self, version, input_shape=(128, 128, 6), num_classes=2):
         super(PneumoniaCNN, self).__init__("CNN", version)
         self.input_shape = input_shape
         self.num_classes = num_classes
@@ -36,13 +36,13 @@ class PneumoniaCNN(BaseModel):
             layers.Dropout(0.25),
 
             layers.Flatten(),
-            layers.Dense(512, activation='relu'),
+            layers.Dense(64, activation='relu'),
             layers.BatchNormalization(),
-            layers.Dropout(0.5),
-            layers.Dense(256, activation='relu'),
             layers.Dropout(0.5),
             layers.Dense(self.num_classes, activation='softmax')
         ])
+
+        model.summary()
 
         model.compile(
             optimizer=optimizers.Adam(learning_rate=0.001),
@@ -73,6 +73,7 @@ class PneumoniaCNN(BaseModel):
 
         self.history = self.model.fit(
             X_train, y_train,
+            # validation_split=0.2,
             validation_data=(X_val, y_val),
             epochs=epochs,
             batch_size=batch_size,
