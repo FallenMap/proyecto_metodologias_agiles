@@ -85,3 +85,18 @@ services:
       - BASE_ETL_PATH=/app/src/Pneumonia_Detection/database
       - OUTPUT_DIR=/app/artifacts
     tty: true
+
+  deploy:
+    user: root
+    build: .
+    command: ["python3", "/app/scripts/deploy/deploy.py"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./src:/app/src
+    environment:
+      - PYTHONPATH=/app/src
+      - MODEL_PATH=/app/artifacts/models/CNN/v2.h5
+    tty: true
+
