@@ -8,3 +8,6 @@ scikit-learn
 numpy
 tensorflow
 scikit-image
+fastapi
+uvicorn
+python-multipart
