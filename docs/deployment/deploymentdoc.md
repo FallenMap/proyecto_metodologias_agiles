@@ -62,7 +62,7 @@ El despliegue se gestiona a través de Docker para garantizar la consistencia y 
     `bash
     docker-compose up -d
     `
-    La plataforma de despliegue en producción (Render) está configurada para el despliegue automático. Cualquier modificación en los archivos de configuración del repositorio popdría afectar los despliegues automáticos.
+    La plataforma de despliegue en producción (Render) está configurada para el despliegue automático. Cualquier modificación en los archivos de configuración del repositorio podría afectar los despliegues automáticos.
 
 - **Instrucciones de configuración:** La configuración del entorno se gestiona a través de archivos de Docker y no requiere modificaciones para una ejecución estándar.
 
