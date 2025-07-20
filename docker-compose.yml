@@ -97,6 +97,5 @@ services:
       - ./src:/app/src
     environment:
       - PYTHONPATH=/app/src
-      - MODEL_PATH=/app/artifacts/models/CNN/v2.h5
+      - MODEL_PATH=/app/artifacts/models/CNN/v6.h5
     tty: true
-

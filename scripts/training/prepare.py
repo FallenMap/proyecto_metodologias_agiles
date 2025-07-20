@@ -63,20 +63,6 @@ def augmentar_datos(X_train):
     datagen.fit(X_train)
     return datagen
 
-def main():
-    BASE_ETL_PATH = os.getenv("BASE_ETL_PATH")
-    project_root = Path(BASE_ETL_PATH).resolve()
-    gold_dir = project_root / "gold"
-    output_dir = project_root / "gold" / "processed_gold"
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    for split in ["train", "val", "test"]:
-        path_split = gold_dir / split / "data.parquet"
-        procesar_y_guardar_por_lotes(path_split, output_dir, split)
-
-    print("¡Procesamiento finalizado y guardado por lotes!")
-
-
 def cargar_datos_divididos(output_dir, split_name):
     X, y = [], []
     archivos = sorted(output_dir.glob(f"X_{split_name}_*.npy"))

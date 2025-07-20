@@ -19,7 +19,7 @@ def cargar_resultados_modelos(output_dir: str) -> Dict[str, Any]:
     model_dir = Path(output_dir) / Path("models")
     results_dir = Path(output_dir) / Path("results")
 
-    model_cnn = PneumoniaCNN('v2')
+    model_cnn = PneumoniaCNN('v6')
     model_cnn.load_model(model_dir)
     model_cnn.load_results(results_dir)
     outputs_cnn = model_cnn.output_results
@@ -106,6 +106,25 @@ def crear_graficos_comparacion(resultados: Dict[str, Any], output_dir: str):
             plt.tight_layout()
             plt.savefig(output_dir / 'importancia_caracteristicas_baseline.png', dpi=300, bbox_inches='tight')
             plt.close()
+
+# Generar matriz de confusión para modelo entrenado
+def generar_matriz_confusion(resultados: Dict[str, Any], output_dir: str):
+    output_dir = Path(output_dir) / Path("plots")
+    conf_matrix = np.array(resultados['cnn']['confusion_matrix'])
+    plt.figure()
+    plt.imshow(conf_matrix, cmap='Blues')
+    plt.title("Matriz de confusión")
+    plt.xlabel("Predicción")
+    plt.ylabel("Valor real")
+    plt.colorbar()
+
+    for i in range(conf_matrix.shape[0]):
+        for j in range(conf_matrix.shape[1]):
+            plt.text(j, i, str(conf_matrix[i, j]), ha='center', va='center', color='black')
+
+    plt.tight_layout()
+    plt.savefig(output_dir / 'confusion_matrix.png', dpi=300, bbox_inches='tight')
+    plt.close()
 
 # Generar informe de comparación entre modelos
 def generar_informe_comparacion(resultados: Dict[str, Any], output_dir: str):
@@ -260,6 +279,9 @@ def main():
     # Crear gráficos de comparación
     print("Creando gráficos de comparación...")
     crear_graficos_comparacion(resultados, OUTPUT_DIR)
+
+    # Generar matriz de confusión para modelo CNN
+    generar_matriz_confusion(resultados, OUTPUT_DIR)
 
     # Generar informe de comparación
     print("Generando informe de comparación...")

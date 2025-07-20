@@ -7,10 +7,11 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 from skimage import filters
 import uvicorn
+import matplotlib.pyplot as plt
 
 # Configuración
 IMAGE_SIZE = (128, 128)
-NORMALIZAR = False
+NORMALIZAR = True
 MODEL_PATH = os.getenv("MODEL_PATH")
 
 if MODEL_PATH is None:
@@ -62,21 +63,20 @@ async def predict(file: UploadFile = File(...)):
 
     try:
         content = await file.read()
-        pixels = preprocess_image(content)        
+        pixels = preprocess_image(content)
         img_2d = reconstruir_imagen(pixels)
         img_multi = aplicar_filtros(img_2d)
         img_multi = np.expand_dims(img_multi, axis=0)
 
         prediction = model.predict(img_multi)
-        probs = prediction[0]
-        label_index = int(np.argmax(probs))
+        label_index = np.round( prediction )
         label = "NORMAL" if label_index == 0 else "PNEUMONIA"
-        probability = float(probs[label_index])
+        probability = float(prediction)
 
         return {
             "filename": file.filename,
             "prediction": label,
-            "probability": round(probability, 4)
+            "score": round(probability, 4)
         }
 
     except Exception as e:

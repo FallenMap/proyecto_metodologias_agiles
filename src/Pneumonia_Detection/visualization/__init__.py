@@ -116,3 +116,35 @@ class Visualizer:
         plt.savefig(out_path)
         plt.close()
         print(f"PCA projection plot saved to: {out_path}")
+
+    def plot_training_(self, n_components=2, batch_size=3000):
+        if self.df is None:
+            raise ValueError("Datos no cargados. Invoque load_data()")
+
+        pixel_columns = [col for col in self.df.columns if col not in NON_PIXEL_COLUMNS]
+        X = self.df[pixel_columns].values
+        y = self.df["clase"].values
+
+        if X.shape[0] > batch_size:
+            print(f"Reduciendo datos para PCA: de {X.shape[0]} a {batch_size} imágenes")
+            idx = np.random.choice(X.shape[0], batch_size, replace=False)
+            X = X[idx]
+            y = y[idx]
+
+        pca = PCA(n_components=n_components)
+        X_pca = pca.fit_transform(X)
+
+        df_pca = pd.DataFrame(X_pca, columns=[f"PC{i+1}" for i in range(n_components)])
+        df_pca["clase"] = y
+
+        plt.figure(figsize=(8, 6))
+        sns.scatterplot(data=df_pca, x="PC1", y="PC2", hue="clase", palette="Set2", alpha=0.6)
+        plt.title("Proyección PCA de imágenes")
+        plt.xlabel("Componente Principal 1")
+        plt.ylabel("Componente Principal 2")
+        plt.legend(title="Clase")
+
+        out_path = self.outputs_path / f"{self.split}_pca_projection.png"
+        plt.savefig(out_path)
+        plt.close()
+        print(f"PCA projection plot saved to: {out_path}")

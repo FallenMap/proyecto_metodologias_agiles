@@ -28,10 +28,10 @@ La metodología y técnicas empleadas fueron las siguientes:
 
 1.  **Arquitectura de la CNN**: Se implementó un modelo secuencial en TensorFlow/Keras compuesto por tres bloques convolucionales. Cada bloque contiene:
 
-    - Una capa `Conv2D` (con 32, 64 y 128 filtros respectivamente).
+    - Una capa `Conv2D` (con 32, 64, 128 y 256 filtros respectivamente).
     - Una capa `BatchNormalization` para estabilizar y acelerar el entrenamiento.
     - Una capa `MaxPooling2D` para reducir la dimensionalidad espacial.
-    - Una capa `Dropout` (con una tasa de 0.25) para regularización.
+    - Una capa `Dropout` (con una tasa de 0,1 y 0.25) para regularización.
       La parte final del modelo consiste en una capa de aplanamiento (`Flatten`) y capas densas con `Dropout` (tasa de 0.5) para realizar la clasificación.
 
 2.  **Aumentación de Datos**: Conscientes de la escasez de datos de validación, se aplicaron técnicas de **aumentación de datos** durante el preprocesamiento. Esto crea nuevas muestras de entrenamiento mediante transformaciones aleatorias de las imágenes existentes (como rotaciones, zooms, etc.), lo que obliga al modelo a aprender características más invariantes y robustas. La forma de la entrada del modelo `(128, 128, 6)` sugiere una estrategia avanzada, posiblemente apilando varias transformaciones como canales de entrada.
@@ -47,7 +47,7 @@ La metodología y técnicas empleadas fueron las siguientes:
 
 La evaluación del modelo final se centró en la métrica de **precisión (accuracy)** en el conjunto de prueba. A pesar de las robustas técnicas de regularización implementadas, las curvas de entrenamiento aún muestran los desafíos del problema.
 
-- **Precisión del Modelo Final (TensorFlow CNN)**: **75.13%**
+- **Precisión del Modelo Final (TensorFlow CNN)**: **88.59%**
 - **Precisión del Modelo Base (Random Forest)**: **73.72%**
 
 ![Gráfico de barras comparando la precisión de los modelos TensorFlow CNN y Random Forest](visualization/comparacion_precision.png)
@@ -59,7 +59,16 @@ Los gráficos de entrenamiento reflejan la lucha del modelo contra el sobreajust
 **Interpretación Detallada:**
 Las curvas muestran una brecha entre el rendimiento de entrenamiento y el de validación. Si bien las técnicas como Dropout y Early Stopping evitaron un colapso total del aprendizaje, la diferencia persistente indica que el modelo aún tiene una tendencia a memorizar los datos de entrenamiento. El `EarlyStopping` probablemente intervino para detener el proceso antes de que el sobreajuste se volviera extremo, seleccionando el modelo con la mejor generalización posible bajo estas condiciones.
 
-El resultado final del 75.13% es, por tanto, el rendimiento optimizado después de aplicar un conjunto de técnicas defensivas contra el sobreajuste.
+El resultado final del 88.59% es, por tanto, el rendimiento optimizado después de aplicar un conjunto de técnicas defensivas contra el sobreajuste.
+
+Durante el entrenamiento, se vió que el modelo tuvo cierta tendencia a la predicción de únicamente imagenes asociadas a neumonía. Sin embargo, gracias a las capas de regularización dadas, se logró alcanzar cierto nivel de generalización en algunas épocas del entrenamiento completo. Pesos que lograron ser capturados a partir del callback `EarlyStopping` y su parámetro de guardado de mejores pesos.
+
+Así mismo, se generó una matríz de confusión que se muestra a continuación:
+[Matriz Confusion](visualization/confusion_matrix.png)
+
+Se encuentra una precisión significativa para casos tanto normales como de neumonía en el conjunto de datos destinado para pruebas. Así mismo, se encontraron 60 casos de falsos positivos (diagnósticos de neumonía a pacientes sanos) y 29 casos de falsos negativos (pacientes con neumonía diagnosticados como sanos).
+
+Pueden además, agregarse algunos indicadores adicionales sobre este análisis, como una Sensibilidad o Recall de **0.92**, una precisión del **0.85** y un F1 Score de alrededor de **0.89**.
 
 ---
 
@@ -70,6 +79,7 @@ El resultado final del 75.13% es, por tanto, el rendimiento optimizado después 
 - **Punto Fuerte**: El modelo final utiliza una arquitectura CNN moderna y un conjunto de técnicas de regularización (aumentación, Dropout, Early Stopping) que son el estándar de la industria para problemas de visión por computadora.
 - **Punto Débil y Limitación Principal**: A pesar de las técnicas implementadas, el modelo no logró generalizar lo suficiente para superar el umbral del 80% de precisión, lo que evidencia la alta complejidad y la escasez de datos del problema.
 - **Resultado Final**: El modelo **no cumple con el requisito mínimo de rendimiento** y no es apto para un escenario de aplicación clínica sin mejoras significativas.
+- **Métricas F1 y Recall**: La capacidad del modelo para predecir correctamente casos positivos en su mayoría cobra vital importancia al tratarse de un contexto médico.
 
 ### **Recomendaciones**
 

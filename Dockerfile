@@ -15,7 +15,7 @@ COPY src/ /app/src
 COPY scripts/ /app/scripts
 COPY artifacts/ /app/artifacts
 
-ENV MODEL_PATH=/app/artifacts/models/CNN/v2.h5
+ENV MODEL_PATH=/app/artifacts/models/CNN/v6.h5
 ENV PYTHONPATH=/app/src
 
 EXPOSE 8000
