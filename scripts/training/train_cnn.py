@@ -1,9 +1,11 @@
 import sys
 import os
 from pathlib import Path
+import tensorflow as tf
 import pandas as pd
 import numpy as np
 import json
+import matplotlib.pyplot as plt
 
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
@@ -28,13 +30,25 @@ def train_cnn_model(
 
     (X_train, X_val, X_test), (y_train, y_val, y_test) = model.prepare_data((X_train, X_val, X_test), (y_train, y_val, y_test))
 
+    mask = y_test.squeeze() == 1
+    X_normal = X_test[ mask ][0]
+    y_normal = y_test[ mask ][0]
+
+    mask = y_test.squeeze() == 0
+    X_pneumonia = X_test[ mask ][0]
+    y_pneumonia = y_test[ mask ][0]
+    plt.imsave("normal.png", X_normal.squeeze(), cmap='gray')
+    plt.imsave("pneumonia.png", X_pneumonia.squeeze(), cmap='gray')
+
+
+    print(X_train.shape, y_train.shape)
     print("Entrenando modelo CNN")
     tmp_path = Path(output_dir) / Path("tmp") / Path("train.keras")
 
     model.build_model()
 
     model.train(
-        X_train, y_train, X_val, y_val, epochs = 20, batch_size = 32,
+        X_train, y_train, X_test, y_test, epochs = 20, batch_size = 32,
         model_save_path = tmp_path
     )
 
@@ -61,8 +75,8 @@ def main():
 
     print("Entrenando modelo de linea base")
 
-    model, results = train_cnn_model(
-        output_dir=OUTPUT_DIR, version='v2',
+    train_cnn_model(
+        output_dir=OUTPUT_DIR, version='v5',
     )
 
     print("Entrenamiento finalizado")

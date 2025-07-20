@@ -1,3 +1,4 @@
+from typing import Tuple
 from Pneumonia_Detection.models.base_model import BaseModel
 import tensorflow as tf
 from tensorflow.keras import layers, models, optimizers
@@ -8,7 +9,7 @@ import json
 import joblib
 
 class PneumoniaCNN(BaseModel):
-    def __init__(self, version, input_shape=(128, 128, 6), num_classes=2):
+    def __init__(self, version, input_shape=(128, 128, 1), num_classes=2):
         super(PneumoniaCNN, self).__init__("CNN", version)
         self.input_shape = input_shape
         self.num_classes = num_classes
@@ -18,37 +19,42 @@ class PneumoniaCNN(BaseModel):
         self.test_accuracy = None
         self.test_crossentropy = None
 
+    def prepare_data(
+        self, X : Tuple[np.array], y : Tuple[np.array]
+    ) -> Tuple[Tuple[np.array], Tuple[np.array]]:
+        """
+        Pasos de preparación específicos del modelo
+        """
+        y = [ _y[:, np.newaxis] for _y in y]
+        X = [ _X[:, :, :, 0, np.newaxis] for _X in X]
+        return X, y
+
     def build_model(self):
-        model = models.Sequential([
-            layers.Conv2D(32, (3, 3), activation='relu', input_shape=self.input_shape),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D((2, 2)),
-            layers.Dropout(0.25),
-
-            layers.Conv2D(64, (3, 3), activation='relu'),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D((2, 2)),
-            layers.Dropout(0.25),
-
-            layers.Conv2D(128, (3, 3), activation='relu'),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D((2, 2)),
-            layers.Dropout(0.25),
-
-            layers.Flatten(),
-            layers.Dense(64, activation='relu'),
-            layers.BatchNormalization(),
-            layers.Dropout(0.5),
-            layers.Dense(self.num_classes, activation='softmax')
-        ])
-
+        model = tf.keras.models.Sequential()
+        model.add(tf.keras.layers.Conv2D(64, (3,3) , strides = 1 , padding = 'same' , activation = 'relu' , input_shape = self.input_shape))
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
+        model.add(tf.keras.layers.Conv2D(128 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
+        model.add(tf.keras.layers.Dropout(0.1))
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
+        model.add(tf.keras.layers.Conv2D(256 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
+        model.add(tf.keras.layers.Conv2D(512 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
+        model.add(tf.keras.layers.Dropout(0.2))
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
+        model.add(tf.keras.layers.Conv2D(1024 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
+        model.add(tf.keras.layers.Dropout(0.2))
+        model.add(tf.keras.layers.BatchNormalization())
+        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
+        model.add(tf.keras.layers.Flatten())
+        model.add(tf.keras.layers.Dense(units = 128 , activation = 'relu'))
+        model.add(tf.keras.layers.Dropout(0.2))
+        model.add(tf.keras.layers.Dense(units = 1 , activation = 'sigmoid'))
+        model.compile(optimizer = "rmsprop" , loss = 'binary_crossentropy' , metrics = ['accuracy', 'binary_crossentropy'])
         model.summary()
-
-        model.compile(
-            optimizer=optimizers.Adam(learning_rate=0.001),
-            loss='sparse_categorical_crossentropy',
-            metrics=['accuracy', 'sparse_categorical_crossentropy']
-        )
 
         self.model = model
         return model
@@ -57,8 +63,8 @@ class PneumoniaCNN(BaseModel):
               epochs=50, batch_size=32, model_save_path=None):
 
         callbacks = [
-            EarlyStopping(monitor='val_loss', patience=4, restore_best_weights=True),
-            ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-7),
+            EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True),
+            ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-8),
         ]
 
         if model_save_path:
@@ -73,7 +79,6 @@ class PneumoniaCNN(BaseModel):
 
         self.history = self.model.fit(
             X_train, y_train,
-            # validation_split=0.2,
             validation_data=(X_val, y_val),
             epochs=epochs,
             batch_size=batch_size,
@@ -88,6 +93,12 @@ class PneumoniaCNN(BaseModel):
 
     def evaluate(self, X_test, y_test):
         test_loss, test_accuracy, test_crossentropy = self.model.evaluate(X_test, y_test, verbose=0)
+
+        y_pred = self.model.predict( X_test )
+        y_test_flat = tf.reshape(y_test, [-1])
+        y_pred_flat = tf.reshape(y_pred, [-1])
+
+        self.confusion_matrix = tf.math.confusion_matrix(y_test_flat, y_pred_flat).numpy()
         self.test_loss = test_loss
         self.test_accuracy = test_accuracy
         self.test_crossentropy = test_crossentropy
@@ -112,9 +123,12 @@ class PneumoniaCNN(BaseModel):
         self.model = tf.keras.models.load_model(final_path)
         return self.model
 
-    def save_results(self, result_path: Path):
+    def save_results(
+            self, result_path: Path
+        ):
         final_path = self.generate_path(result_path) / Path(f"{self.version}.json")
         Path(final_path).parent.mkdir(parents=True, exist_ok=True)
+
         self.output_results = {
             'test_loss': self.test_loss,
             'test_accuracy': self.test_accuracy,
@@ -124,7 +138,8 @@ class PneumoniaCNN(BaseModel):
                 'accuracy': [float(x) for x in self.history.history['accuracy']],
                 'val_loss': [float(x) for x in self.history.history['val_loss']],
                 'val_accuracy': [float(x) for x in self.history.history['val_accuracy']]
-            }
+            },
+            'confusion_matrix': self.confusion_matrix.tolist()
         }
 
         with open(final_path, 'w') as f:
