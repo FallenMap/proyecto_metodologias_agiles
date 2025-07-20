@@ -7,10 +7,11 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 from skimage import filters
 import uvicorn
+import matplotlib.pyplot as plt
 
 # Configuración
 IMAGE_SIZE = (128, 128)
-NORMALIZAR = False
+NORMALIZAR = True
 MODEL_PATH = os.getenv("MODEL_PATH")
 
 if MODEL_PATH is None:
