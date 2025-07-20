@@ -54,7 +54,7 @@ El despliegue se gestiona a través de Docker para garantizar la consistencia y 
     git clone [https://github.com/FallenMap/proyecto_metodologias_agiles.git](https://github.com/FallenMap/proyecto_metodologias_agiles.git)
     cd proyecto_metodologias_agiles
     ```
-3.  **Se dede construir la Imagen Docker:** Este comando procesa el `Dockerfile` para construir la imagen, instalando las dependencias de Python y empaquetando la aplicación.
+3.  **Se debe construir la Imagen Docker:** Este comando procesa el `Dockerfile` para construir la imagen, instalando las dependencias de Python y empaquetando la aplicación.
     ```bash
     docker-compose build
     ```
