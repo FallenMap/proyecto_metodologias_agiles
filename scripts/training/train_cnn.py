@@ -30,17 +30,6 @@ def train_cnn_model(
 
     (X_train, X_val, X_test), (y_train, y_val, y_test) = model.prepare_data((X_train, X_val, X_test), (y_train, y_val, y_test))
 
-    mask = y_test.squeeze() == 1
-    X_normal = X_test[ mask ][0]
-    y_normal = y_test[ mask ][0]
-
-    mask = y_test.squeeze() == 0
-    X_pneumonia = X_test[ mask ][0]
-    y_pneumonia = y_test[ mask ][0]
-    plt.imsave("normal.png", X_normal.squeeze(), cmap='gray')
-    plt.imsave("pneumonia.png", X_pneumonia.squeeze(), cmap='gray')
-
-
     print(X_train.shape, y_train.shape)
     print("Entrenando modelo CNN")
     tmp_path = Path(output_dir) / Path("tmp") / Path("train.keras")
@@ -76,7 +65,7 @@ def main():
     print("Entrenando modelo de linea base")
 
     train_cnn_model(
-        output_dir=OUTPUT_DIR, version='v5',
+        output_dir=OUTPUT_DIR, version='v6',
     )
 
     print("Entrenamiento finalizado")

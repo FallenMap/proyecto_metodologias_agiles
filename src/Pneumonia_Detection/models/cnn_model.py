@@ -94,7 +94,7 @@ class PneumoniaCNN(BaseModel):
     def evaluate(self, X_test, y_test):
         test_loss, test_accuracy, test_crossentropy = self.model.evaluate(X_test, y_test, verbose=0)
 
-        y_pred = self.model.predict( X_test )
+        y_pred = np.round( self.model.predict( X_test ) )
         y_test_flat = tf.reshape(y_test, [-1])
         y_pred_flat = tf.reshape(y_pred, [-1])
 

@@ -2,18 +2,18 @@
 
 ## Resumen
 
-- **Precisión TensorFlow CNN**: 0.7513
+- **Precisión TensorFlow CNN**: 0.8859
 - **Precisión Random Forest**: 0.7372
-- **Diferencia de Precisión**: 0.0141
+- **Diferencia de Precisión**: 0.1487
 - **Mejor Modelo**: TensorFlow CNN
 
 ## Comparación Detallada
 
 ### TensorFlow CNN
 
-- **Precisión**: 0.7513
+- **Precisión**: 0.8859
 - **Tipo de Modelo**: Red Neuronal Convolucional
-- **Pérdida de Prueba**: 1.243857741355896
+- **Pérdida de Prueba**: 0.2667672634124756
 
 **Ventajas**:
 - Puede capturar patrones espaciales en imágenes
@@ -44,4 +44,3 @@
 ## Recomendaciones
 
 - TensorFlow CNN se desempeña mejor que Random Forest baseline
-- Los modelos se desempeñan de forma similar
