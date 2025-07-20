@@ -27,6 +27,7 @@
 
 - **Diagrama de arquitectura:**
   Se presentan los componentes que hacen parte del diagrama general de la arquitectura definida. Se definen además elementos de despliegue continuo a través de repositorio.
+  Se utiliza un proveedor externo de despliegues documentado en: https://github.com/marketplace/actions/deploy-to-render. Así mismo, se crea un API Key para la autenticación de las peticiones realizadas para el re-despliegue del proyecto.
 
   ![Diagrama Arquitectura](./diagrams/diagram_infrastructure.jpg)
 
