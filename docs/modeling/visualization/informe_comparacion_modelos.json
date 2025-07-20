@@ -1,0 +1,43 @@
+{
+  "resumen": {
+    "precision_tensorflow": 0.8858974575996399,
+    "precision_baseline": 0.7371794871794872,
+    "diferencia_precision": 0.14871797042015267,
+    "mejor_modelo": "TensorFlow CNN"
+  },
+  "comparacion_detallada": {
+    "cnn": {
+      "precision_prueba": 0.8858974575996399,
+      "perdida_prueba": 0.2667672634124756,
+      "tipo_modelo": "Red Neuronal Convolucional",
+      "ventajas": [
+        "Puede capturar patrones espaciales en im\u00e1genes",
+        "Aprende caracter\u00edsticas jer\u00e1rquicas",
+        "Adecuado para clasificaci\u00f3n compleja de im\u00e1genes"
+      ],
+      "desventajas": [
+        "Requiere m\u00e1s recursos computacionales",
+        "Tiempo de entrenamiento m\u00e1s largo",
+        "M\u00e1s hiperpar\u00e1metros para ajustar"
+      ]
+    },
+    "baseline": {
+      "precision_prueba": 0.7371794871794872,
+      "tipo_modelo": "Random Forest",
+      "ventajas": [
+        "Entrenamiento y predicci\u00f3n r\u00e1pidos",
+        "Proporciona importancia de caracter\u00edsticas",
+        "Menor riesgo de sobreajuste",
+        "F\u00e1cil de interpretar"
+      ],
+      "desventajas": [
+        "No capta relaciones espaciales",
+        "Limitado a datos tabulares",
+        "Puede no capturar patrones complejos"
+      ]
+    }
+  },
+  "recomendaciones": [
+    "TensorFlow CNN se desempe\u00f1a mejor que Random Forest baseline"
+  ]
+}

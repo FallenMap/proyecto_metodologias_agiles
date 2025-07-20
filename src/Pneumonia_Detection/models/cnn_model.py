@@ -1,15 +1,13 @@
 from typing import Tuple
-from Pneumonia_Detection.models.base_model import BaseModel
 import tensorflow as tf
-from tensorflow.keras import layers, models, optimizers
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import numpy as np
 from pathlib import Path
 import json
 import joblib
-
+from Pneumonia_Detection.models.base_model import BaseModel
 class PneumoniaCNN(BaseModel):
-    def __init__(self, version, input_shape=(128, 128, 1), num_classes=2):
+    def __init__(self, version, input_shape=(128, 128, 6), num_classes=2):
         super(PneumoniaCNN, self).__init__("CNN", version)
         self.input_shape = input_shape
         self.num_classes = num_classes
@@ -26,34 +24,40 @@ class PneumoniaCNN(BaseModel):
         Pasos de preparación específicos del modelo
         """
         y = [ _y[:, np.newaxis] for _y in y]
-        X = [ _X[:, :, :, 0, np.newaxis] for _X in X]
+        X = [ _X[:, :, :, :, np.newaxis] for _X in X]
         return X, y
 
     def build_model(self):
-        model = tf.keras.models.Sequential()
-        model.add(tf.keras.layers.Conv2D(64, (3,3) , strides = 1 , padding = 'same' , activation = 'relu' , input_shape = self.input_shape))
-        model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
-        model.add(tf.keras.layers.Conv2D(128 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
-        model.add(tf.keras.layers.Dropout(0.1))
-        model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
-        model.add(tf.keras.layers.Conv2D(256 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
-        model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
-        model.add(tf.keras.layers.Conv2D(512 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
-        model.add(tf.keras.layers.Dropout(0.2))
-        model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
-        model.add(tf.keras.layers.Conv2D(1024 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
-        model.add(tf.keras.layers.Dropout(0.2))
-        model.add(tf.keras.layers.BatchNormalization())
-        model.add(tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same'))
-        model.add(tf.keras.layers.Flatten())
-        model.add(tf.keras.layers.Dense(units = 128 , activation = 'relu'))
-        model.add(tf.keras.layers.Dropout(0.2))
-        model.add(tf.keras.layers.Dense(units = 1 , activation = 'sigmoid'))
-        model.compile(optimizer = "rmsprop" , loss = 'binary_crossentropy' , metrics = ['accuracy', 'binary_crossentropy'])
+        input = tf.keras.layers.Input(self.input_shape)
+
+        x = tf.keras.layers.Conv2D(32 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu')(input)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same')(x)
+        x = tf.keras.layers.Conv2D(64 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(0.1)(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same')(x)
+        x = tf.keras.layers.Conv2D(64 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu')(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same')(x)
+        x = tf.keras.layers.Conv2D(128 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(0.2)(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same')(x)
+        x = tf.keras.layers.Conv2D(256 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(0.25)(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.MaxPool2D((2,2) , strides = 2 , padding = 'same')(x)
+        x = tf.keras.layers.Flatten()(x)
+        x = tf.keras.layers.Dense(units = 128 , activation = 'relu')(x)
+        x = tf.keras.layers.Dropout(0.25)(x)
+        x = tf.keras.layers.Dense(units = 1 , activation = 'sigmoid')(x)
+
+        model = tf.keras.layers.Model(inputs = input, outputs = x)
+
+        model.compile(
+            optimizer = "adam" , loss = 'binary_crossentropy' , metrics = ['accuracy', 'binary_crossentropy']
+        )
         model.summary()
 
         self.model = model
@@ -64,7 +68,7 @@ class PneumoniaCNN(BaseModel):
 
         callbacks = [
             EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True),
-            ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-8),
+            ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, min_lr=1e-8),
         ]
 
         if model_save_path:
