@@ -76,7 +76,7 @@ async def predict(file: UploadFile = File(...)):
         return {
             "filename": file.filename,
             "prediction": label,
-            "probability": round(probability, 4)
+            "score": round(probability, 4)
         }
 
     except Exception as e:
