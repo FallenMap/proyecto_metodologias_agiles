@@ -49,24 +49,24 @@
 El despliegue se gestiona a través de Docker para garantizar la consistencia y reproducibilidad del entorno. Los pasos para la instalación en un sistema local son los siguientes:
 
 1.  **Prerrequisitos:** Se requiere tener **Git** y **Docker/Docker Compose** instalados en el sistema operativo.
-2.  **Clonar el Repositorio:** Toca ejecutar el siguiente comando en una terminal para descargar el código fuente.
+2.  **Clonar el Repositorio:** Se debe ejecutar el siguiente comando en una terminal para descargar el código fuente.
     ```bash
     git clone [https://github.com/FallenMap/proyecto_metodologias_agiles.git](https://github.com/FallenMap/proyecto_metodologias_agiles.git)
     cd proyecto_metodologias_agiles
     ```
 3.  **Se debe construir la Imagen Docker:** Este comando procesa el `Dockerfile` para construir la imagen, instalando las dependencias de Python y empaquetando la aplicación.
     ```bash
-    docker-compose build
+    docker compose build deploy
     ```
 4.  **Ejecutar el Contenedor:** Este comando inicia la aplicación en modo desacoplado (`-d`). El servicio quedará disponible en el puerto 8000 del host.
     ```bash
-    docker-compose up -d
+    docker compose up -d deploy
     ```
     La plataforma de despliegue en producción (Render) está configurada para el despliegue automático. Cualquier modificación en los archivos de configuración del repositorio podría afectar los despliegues automáticos.
 
 - **Instrucciones de configuración:** La configuración del entorno se gestiona a través de archivos de Docker y no requiere modificaciones para una ejecución estándar.
 
-  - **Ruta del Modelo:** La variable de entorno `MODEL_PATH` especifica la ruta absoluta del modelo de predicción dentro del contenedor. Su valor por defecto es `/app/artifacts/models/CNN/v2.h5` y se define en el `Dockerfile` y `docker-compose.yml`.
+  - **Ruta del Modelo:** La variable de entorno `MODEL_PATH` especifica la ruta absoluta del modelo de predicción dentro del contenedor. Su valor por defecto es `/app/artifacts/models/CNN/v6.h5` y se define en el `Dockerfile` y `docker-compose.yml`.
   - **Puerto de Red:** La aplicación se ejecuta en el puerto `8000` dentro del contenedor. El archivo `docker-compose.yml` mapea este puerto al `8000` de la máquina anfitriona (`ports: ["8000:8000"]`).
   - **Entorno de Desarrollo:** El `docker-compose.yml` utiliza volúmenes para sincronizar el código local con el contenedor, agilizando el ciclo de desarrollo. Para producción, el `Dockerfile` utiliza la instrucción `COPY` para crear una imagen inmutable, lo cual es una práctica recomendada.
 
@@ -106,18 +106,18 @@ El despliegue se gestiona a través de Docker para garantizar la consistencia y 
 - **Instrucciones de mantenimiento:** Las tareas de mantenimiento se centran en la monitorización y actualización del servicio.
   - **Monitorización de Logs:** Para revisar los registros de la aplicación en tiempo real, utilice el siguiente comando:
     ```bash
-    docker-compose logs -f deploy
+    docker compose logs -f deploy
     ```
   - **Actualización del Modelo:**
     1.  Reemplazar el archivo del modelo en el directorio local `./artifacts/models/CNN/`.
     2.  Si el nombre del archivo del nuevo modelo es diferente, actualizar la variable `MODEL_PATH` en el `docker-compose.yml`.
     3.  Reconstruir la imagen y reiniciar el servicio:
         ```bash
-        docker-compose build && docker-compose up -d
+          docker compose build deploy && docker compose up -d deploy
         ```
   - **Actualización de Dependencias:**
     1.  Modificar el archivo `requirements.txt` con las librerías o versiones deseadas.
     2.  Reconstruir la imagen usando la opción `--no-cache` para forzar la reinstalación de las dependencias y reiniciar el servicio.
         ```bash
-        docker-compose build --no-cache && docker-compose up -d
+          docker compose build --no-cache deploy && docker compose up -d deploy
         ```
