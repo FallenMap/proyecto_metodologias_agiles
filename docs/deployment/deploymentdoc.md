@@ -59,9 +59,9 @@ El despliegue se gestiona a través de Docker para garantizar la consistencia y 
     docker-compose build
     ```
 4.  **Ejecutar el Contenedor:** Este comando inicia la aplicación en modo desacoplado (`-d`). El servicio quedará disponible en el puerto 8000 del host.
-    `bash
+    ```bash
     docker-compose up -d
-    `
+    ```
     La plataforma de despliegue en producción (Render) está configurada para el despliegue automático. Cualquier modificación en los archivos de configuración del repositorio podría afectar los despliegues automáticos.
 
 - **Instrucciones de configuración:** La configuración del entorno se gestiona a través de archivos de Docker y no requiere modificaciones para una ejecución estándar.
