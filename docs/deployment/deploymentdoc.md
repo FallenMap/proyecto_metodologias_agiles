@@ -44,7 +44,80 @@
 
 ## Documentación del despliegue
 
-- **Instrucciones de instalación:** (instrucciones detalladas para instalar el modelo en la plataforma de despliegue)
-- **Instrucciones de configuración:** (instrucciones detalladas para configurar el modelo en la plataforma de despliegue)
-- **Instrucciones de uso:** (instrucciones detalladas para utilizar el modelo en la plataforma de despliegue)
-- **Instrucciones de mantenimiento:** (instrucciones detalladas para mantener el modelo en la plataforma de despliegue)
+- **Instrucciones de instalación:**
+
+El despliegue se gestiona a través de Docker para garantizar la consistencia y reproducibilidad del entorno. Los pasos para la instalación en un sistema local son los siguientes:
+
+1.  **Prerrequisitos:** Se requiere tener **Git** y **Docker/Docker Compose** instalados en el sistema operativo.
+2.  **Clonar el Repositorio:** Se debe ejecutar el siguiente comando en una terminal para descargar el código fuente.
+    ```bash
+    git clone [https://github.com/FallenMap/proyecto_metodologias_agiles.git](https://github.com/FallenMap/proyecto_metodologias_agiles.git)
+    cd proyecto_metodologias_agiles
+    ```
+3.  **Se debe construir la Imagen Docker:** Este comando procesa el `Dockerfile` para construir la imagen, instalando las dependencias de Python y empaquetando la aplicación.
+    ```bash
+    docker compose build deploy
+    ```
+4.  **Ejecutar el Contenedor:** Este comando inicia la aplicación en modo desacoplado (`-d`). El servicio quedará disponible en el puerto 8000 del host.
+    ```bash
+    docker compose up -d deploy
+    ```
+    La plataforma de despliegue en producción (Render) está configurada para el despliegue automático. Cualquier modificación en los archivos de configuración del repositorio podría afectar los despliegues automáticos.
+
+- **Instrucciones de configuración:** La configuración del entorno se gestiona a través de archivos de Docker y no requiere modificaciones para una ejecución estándar.
+
+  - **Ruta del Modelo:** La variable de entorno `MODEL_PATH` especifica la ruta absoluta del modelo de predicción dentro del contenedor. Su valor por defecto es `/app/artifacts/models/CNN/v6.h5` y se define en el `Dockerfile` y `docker-compose.yml`.
+  - **Puerto de Red:** La aplicación se ejecuta en el puerto `8000` dentro del contenedor. El archivo `docker-compose.yml` mapea este puerto al `8000` de la máquina anfitriona (`ports: ["8000:8000"]`).
+  - **Entorno de Desarrollo:** El `docker-compose.yml` utiliza volúmenes para sincronizar el código local con el contenedor, agilizando el ciclo de desarrollo. Para producción, el `Dockerfile` utiliza la instrucción `COPY` para crear una imagen inmutable, lo cual es una práctica recomendada.
+
+- **Instrucciones de uso:** Una vez desplegado, el modelo es accesible a través de una API REST.
+
+  - **Endpoint:** `/predict`
+  - **Método:** `POST`
+  - **URL (Producción):** `https://proyecto-metodologias-agiles.onrender.com/predict`
+    - **Nota:** Esta URL corresponde a un servicio desplegado en el plan gratuito de Render. El servicio puede entrar en estado de inactividad tras un periodo sin uso. La primera solicitud después de la inactividad puede experimentar una latencia elevada (hasta 40 segundos) mientras el servicio se reactiva.
+  - **URL (Local):** `http://localhost:8000/predict`
+  - **Cuerpo de la Solicitud:** La solicitud debe ser de tipo `multipart/form-data` y contener un campo `file` con la imagen (`.jpeg` o `.jpg`) a clasificar.
+  - **Ejemplo con `curl`:**
+    ```bash
+    curl -X 'POST' \
+      '[https://proyecto-metodologias-agiles.onrender.com/predict](https://proyecto-metodologias-agiles.onrender.com/predict)' \
+      -H 'accept: application/json' \
+      -H 'Content-Type: multipart/form-data' \
+      -F 'file=@/ruta/completa/a/la/imagen.jpg'
+    ```
+  - **Uso con Postman:**
+    1.  Crear una nueva solicitud y seleccionar el método `POST`.
+    2.  Ingresar la URL del servicio (local o de producción).
+    3.  Navegar a la pestaña **Body** y seleccionar la opción **form-data**.
+    4.  En la tabla de `KEY`, ingresar `file`.
+    5.  En el extremo derecho de la misma fila, hacer clic en el menú desplegable que por defecto dice "Text" y seleccionar **"File"**.
+    6.  Aparecerá un botón **"Select Files"**. Hacer clic para adjuntar la imagen desde el sistema de archivos.
+    7.  Enviar la solicitud.
+  - **Respuesta Exitosa:** Devuelve un objeto JSON con los resultados de la predicción.
+    ```json
+    {
+      "filename": "imagen.jpg",
+      "prediction": "PNEUMONIA",
+      "probability": 0.9987
+    }
+    ```
+
+- **Instrucciones de mantenimiento:** Las tareas de mantenimiento se centran en la monitorización y actualización del servicio.
+  - **Monitorización de Logs:** Para revisar los registros de la aplicación en tiempo real, utilice el siguiente comando:
+    ```bash
+    docker compose logs -f deploy
+    ```
+  - **Actualización del Modelo:**
+    1.  Reemplazar el archivo del modelo en el directorio local `./artifacts/models/CNN/`.
+    2.  Si el nombre del archivo del nuevo modelo es diferente, actualizar la variable `MODEL_PATH` en el `docker-compose.yml`.
+    3.  Reconstruir la imagen y reiniciar el servicio:
+        ```bash
+          docker compose build deploy && docker compose up -d deploy
+        ```
+  - **Actualización de Dependencias:**
+    1.  Modificar el archivo `requirements.txt` con las librerías o versiones deseadas.
+    2.  Reconstruir la imagen usando la opción `--no-cache` para forzar la reinstalación de las dependencias y reiniciar el servicio.
+        ```bash
+          docker compose build --no-cache deploy && docker compose up -d deploy
+        ```
