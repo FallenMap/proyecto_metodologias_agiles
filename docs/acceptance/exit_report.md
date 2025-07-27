@@ -135,11 +135,12 @@ La alta sensibilidad (0.92) es crítica para minimizar falsos negativos.
 
 ### Recomendaciones Futuras
 
-1. **Transfer Learning** con modelos preentrenados (ej. ImageNet).
-2. **Aumentación de Datos Avanzada** (GANs, AutoAugment).
-3. **Recolección de Más Datos**.
-4. **Optimización de Hiperparámetros** (Bayesian Optimization). Me pueden ayudar acá, no sé que mas poner
-5. **Análisis de Errores Detallado** (falsos positivos y negativos).
+1. **Transfer Learning:** Usar modelos preentrenados (e.g., ResNet, VGG, EfficientNet) para mejorar el rendimiento con menos datos.
+2. **Aumentación Avanzada:** Aplicar técnicas como GANs o AutoAugment para generar datos sintéticos y enriquecer el entrenamiento.
+3. **Más Datos:** Recolectar más imágenes balanceadas para mejorar la generalización del modelo.
+4. **Tuning con Keras Tuner:** Optimizar hiperparámetros automáticamente mediante búsqueda eficiente .
+5. **Probar Distintas Arquitecturas:** Evaluar múltiples CNN (MobileNet, DenseNet, etc.) para encontrar la más adecuada.
+6. **Análisis de Errores:** Estudiar falsos positivos/negativos para guiar mejoras en el modelo y los datos.
 
 ---
 
