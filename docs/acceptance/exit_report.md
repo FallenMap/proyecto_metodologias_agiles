@@ -2,7 +2,7 @@
 
 ## Resumen Ejecutivo
 
-Este informe documenta los resultados del proyecto de Machine Learning **"Detección de neumonía con base en imagen de rayos X de región torácica"**, el cual siguió la metodología **CRISP-DM**. El objetivo principal fue desarrollar un modelo capaz de detectar la neumonía a partir de imágenes de rayos X de la region toraxica con una **precisión mínima del 80%**.
+Este informe documenta los resultados del proyecto de Machine Learning **"Detección de neumonía con base en imagen de rayos X de región torácica"**, el cual siguió la metodología **CRISP-DM**. El objetivo principal fue desarrollar un modelo capaz de detectar la neumonía a partir de imágenes de rayos X de la región torácica con una **precisión mínima del 80%**.
 
 Inicialmente se implementó un modelo final basado en **Redes Neuronales Convolucionales (CNN)** y se comparó con un modelo base de **Random Forest Classifier**. A pesar de utilizar técnicas avanzadas de aumentación de datos, regularización (Dropout, Batch Normalization) y entrenamiento (Early Stopping), el modelo CNN final alcanzó una **precisión del 88.59%** en el conjunto de prueba, superando significativamente la precisión del modelo base (73.72%). Sin embargo, la brecha entre la precisión de entrenamiento y validación nos indicó que, aunque se hicieron avances, el modelo aún enfrenta desafíos de generalización.
 
