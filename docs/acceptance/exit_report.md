@@ -6,8 +6,13 @@ Este informe documenta los resultados del proyecto de Machine Learning **"Detecc
 
 Inicialmente se implementó un modelo final basado en **Redes Neuronales Convolucionales (CNN)** y se comparó con un modelo base de **Random Forest Classifier**. A pesar de utilizar técnicas avanzadas de aumentación de datos, regularización (Dropout, Batch Normalization) y entrenamiento (Early Stopping), el modelo CNN final alcanzó una **precisión del 88.59%** en el conjunto de prueba, superando significativamente la precisión del modelo base (73.72%). Sin embargo, la brecha entre la precisión de entrenamiento y validación nos indicó que, aunque se hicieron avances, el modelo aún enfrenta desafíos de generalización.
 
-## Los principales logros fueron el desarrollo de un modelo robusto que supera al _baseline_ y la identificación de métricas clave como **Recall (0.92)** y **F1 Score (0.89)**, vitales en un contexto médico. Las lecciones aprendidas Además, se implementó un flujo de trabajo reproducible con versionamiento, lo que permitió mantener un control riguroso sobre los experimentos, configuraciones y resultados a lo largo del proyecto. Las lecciones aprendidas resaltan la importancia de la calidad y cantidad de datos para problemas complejos de visión por computadora, especialmente la disponibilidad de más datos de validación, que en este caso resultó ser un factor crítico para mejorar la capacidad de generalización del modelo. Las recomendaciones futuras se centran en el aprendizaje por transferencia y una mayor experimentación con la aumentación de datos y la arquitectura del modelo para seguir optimizando el desempeño y cumplir el objetivo inicial.
+## Los principales logros fueron el desarrollo de un modelo robusto que supera al _baseline_ y la identificación de métricas clave como **Recall (0.92)** y **F1 Score (0.89)**, vitales en un contexto médico.
 
+Además, se implementó un flujo de trabajo reproducible con versionamiento, lo que permitió mantener un control riguroso sobre los experimentos, configuraciones y resultados a lo largo del proyecto.
+
+Las lecciones aprendidas resaltan la importancia de la calidad y cantidad de datos para problemas complejos de visión por computadora, especialmente la disponibilidad de más datos de validación, que en este caso resultó ser un factor crítico para mejorar la capacidad de generalización del modelo.
+
+Las recomendaciones futuras se centran en el aprendizaje por transferencia y una mayor experimentación con la aumentación de datos y la arquitectura del modelo para seguir optimizando el desempeño y cumplir el objetivo inicial.
 ## Resultados del Proyecto
 
 ### Entregables y Logros Alcanzados por Etapa (CRISP-DM)
