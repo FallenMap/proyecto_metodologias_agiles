@@ -180,7 +180,7 @@ Se aplicó con éxito la metodología CRISP-DM, se implementaron técnicas de au
 
 ### Conclusiones Finales y Recomendaciones
 
-Aunque no se alcanzó el umbral de precisión inicial (80%) según el _Project Charter_, se logró superarlo ampliamente.
+Aunque el umbral de precisión inicial (80%) según el _Project Charter_ fue superado ampliamente, se identificaron áreas para seguir mejorando.
 
 Para futuros proyectos:
 
